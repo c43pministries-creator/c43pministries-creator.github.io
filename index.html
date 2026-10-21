@@ -33,15 +33,26 @@
 
         header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
             border-bottom: 1px solid var(--soft-clay);
             padding-bottom: 30px;
+        }
+
+        /* NEW: Logo Styling */
+        .logo {
+            width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--warm-sand);
+            background-color: white; /* If the image has a transparent background, this makes it pop */
         }
 
         h1 {
             color: var(--warm-sand);
             font-size: 2.5em;
             margin-bottom: 10px;
+            margin-top: 0;
         }
 
         .tagline {
@@ -76,6 +87,30 @@
         .highlight {
             color: var(--warm-sand);
             font-weight: bold;
+        }
+
+        /* NEW: Well of Peace Button */
+        .well-btn-container {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .well-btn {
+            display: inline-block;
+            background-color: var(--warm-sand);
+            color: var(--bg-color);
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .well-btn:hover {
+            background-color: #f0d5b5;
+            transform: translateY(-2px);
         }
 
         /* App and Feature Cards */
@@ -191,12 +226,19 @@
 
 <div class="container">
     <header>
+        <!-- CHANGE THE SRC TO THE EXACT FILENAME YOU UPLOADED -->
+        <img src="peaceplacelogo.jpg" alt="The Peace Place Logo" class="logo">
         <h1>The Peace Place</h1>
         <div class="tagline">Places Where Dignity Is the Default.</div>
         <div class="motto">Kindness first. Respect always. Faith never forced.</div>
     </header>
 
     <p>The Peace Place creates sanctuary—in your pocket, in your neighborhood, and in your heart. We build tools that protect you without ever seeing your data. We are building spaces where anyone without a home, or anyone healing from abuse, can get free coffee and a moment of calm. Faith inspires everything we do. But kindness is the only requirement to belong here.</p>
+
+    <!-- NEW: Well of Peace Button -->
+    <div class="well-btn-container">
+        <a href="well.html" class="well-btn">Enter The Well of Peace</a>
+    </div>
 
     <h2>The Core: The Peacemaker</h2>
     <p><span class="highlight">The Peacemaker (In Active Development)</span></p>
