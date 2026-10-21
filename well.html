@@ -28,7 +28,6 @@
             height: 100vh;
         }
 
-        /* Top Navigation */
         .top-nav {
             background-color: var(--bg-color);
             padding: 15px 20px;
@@ -38,202 +37,90 @@
             border-bottom: 1px solid var(--soft-clay);
         }
 
-        .top-nav h1 {
-            margin: 0;
-            font-size: 1.5em;
-            color: var(--warm-sand);
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 15px;
-        }
-
+        .top-nav h1 { margin: 0; font-size: 1.5em; color: var(--warm-sand); }
+        .nav-buttons { display: flex; gap: 15px; }
         .nav-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1em;
-            cursor: pointer;
-            padding: 5px 10px;
+            background: none; border: none; color: var(--text-muted);
+            font-size: 1em; cursor: pointer; padding: 5px 10px;
             border-bottom: 2px solid transparent;
         }
-
-        .nav-btn.active {
-            color: var(--warm-sand);
-            border-bottom: 2px solid var(--warm-sand);
-            font-weight: bold;
-        }
-
+        .nav-btn.active { color: var(--warm-sand); border-bottom: 2px solid var(--warm-sand); font-weight: bold; }
         .back-btn {
-            background: none;
-            border: 1px solid var(--warm-sand);
-            color: var(--warm-sand);
-            padding: 5px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 0.9em;
+            background: none; border: 1px solid var(--warm-sand); color: var(--warm-sand);
+            padding: 5px 15px; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.9em;
         }
 
-        /* Forums Bar */
         .forums-bar {
-            display: flex;
-            gap: 10px;
-            padding: 10px 20px;
-            overflow-x: auto;
-            background-color: var(--card-bg);
-            border-bottom: 1px solid var(--soft-clay);
+            display: flex; gap: 10px; padding: 10px 20px; overflow-x: auto;
+            background-color: var(--card-bg); border-bottom: 1px solid var(--soft-clay);
         }
-
         .forum-chip {
-            background-color: transparent;
-            border: 1px solid var(--soft-clay);
-            color: var(--text-main);
-            padding: 6px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            white-space: nowrap;
-            font-size: 0.9em;
+            background-color: transparent; border: 1px solid var(--soft-clay);
+            color: var(--text-main); padding: 6px 12px; border-radius: 20px;
+            cursor: pointer; white-space: nowrap; font-size: 0.9em;
         }
-
         .forum-chip.active {
-            background-color: var(--warm-sand);
-            color: var(--bg-color);
-            border-color: var(--warm-sand);
-            font-weight: bold;
+            background-color: var(--warm-sand); color: var(--bg-color);
+            border-color: var(--warm-sand); font-weight: bold;
         }
 
-        /* Main Content Areas */
         .content-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+            flex: 1; overflow-y: auto; padding: 20px;
+            display: flex; flex-direction: column; gap: 15px;
         }
+        .hidden { display: none !important; }
 
-        .hidden {
-            display: none !important;
-        }
-
-        /* Wall Styles */
         .post-card {
-            background-color: var(--card-bg);
-            padding: 15px;
-            border-radius: 8px;
-            max-width: 85%;
-            align-self: flex-start;
+            background-color: var(--card-bg); padding: 15px;
+            border-radius: 8px; max-width: 85%; align-self: flex-start;
         }
-
         .post-card.globe {
-            background-color: var(--globe-bg);
-            align-self: flex-end;
+            background-color: var(--globe-bg); align-self: flex-end;
             border-left: 3px solid var(--warm-sand);
         }
-
         .post-meta {
-            font-size: 0.75em;
-            color: var(--text-muted);
-            margin-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
+            font-size: 0.75em; color: var(--text-muted); margin-bottom: 5px;
+            display: flex; justify-content: space-between;
         }
-
         .author-name { font-weight: bold; color: var(--warm-sand); }
         .post-content { line-height: 1.4; }
         .thinking { font-size: 0.85em; color: var(--text-muted); font-style: italic; padding-left: 20px; }
 
-        /* Input Area */
         .input-area {
-            padding: 15px 20px;
-            background-color: var(--card-bg);
-            border-top: 1px solid var(--soft-clay);
-            display: flex;
-            gap: 10px;
-            align-items: center;
+            padding: 15px 20px; background-color: var(--card-bg);
+            border-top: 1px solid var(--soft-clay); display: flex; gap: 10px; align-items: center;
         }
-
         .input-area input, .input-area textarea {
-            flex: 1;
-            background-color: var(--bg-color);
-            border: 1px solid var(--soft-clay);
-            color: var(--text-main);
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 1em;
-            font-family: inherit;
+            flex: 1; background-color: var(--bg-color); border: 1px solid var(--soft-clay);
+            color: var(--text-main); padding: 12px; border-radius: 6px; font-size: 1em; font-family: inherit;
         }
-
-        .input-area input:focus, .input-area textarea:focus {
-            outline: none;
-            border-color: var(--warm-sand);
-        }
-
+        .input-area input:focus, .input-area textarea:focus { outline: none; border-color: var(--warm-sand); }
         .primary-btn {
-            background-color: var(--warm-sand);
-            color: var(--bg-color);
-            border: none;
-            padding: 12px 20px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
+            background-color: var(--warm-sand); color: var(--bg-color); border: none;
+            padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;
         }
-
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Project Styles */
         .project-card {
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid var(--success);
+            background-color: var(--card-bg); padding: 20px;
+            border-radius: 8px; border-left: 4px solid var(--success);
         }
-
         .project-title { font-size: 1.2em; font-weight: bold; color: var(--warm-sand); margin-bottom: 5px; }
         .project-desc { margin-bottom: 15px; }
-        
         .project-stats {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85em;
-            color: var(--text-muted);
-            border-top: 1px solid var(--soft-clay);
-            padding-top: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.85em; color: var(--text-muted);
+            border-top: 1px solid var(--soft-clay); padding-top: 10px;
         }
-
         .tag {
-            background-color: var(--soft-clay);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.8em;
+            background-color: var(--soft-clay); color: white;
+            padding: 2px 8px; border-radius: 12px; font-size: 0.8em;
         }
-
-        .form-group {
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9em;
-        }
-
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 5px; }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; font-size: 0.9em; }
         .shield-error {
-            background-color: var(--danger);
-            color: white;
-            padding: 10px;
-            margin: 0 20px;
-            border-radius: 6px;
-            font-weight: bold;
-            display: none;
+            background-color: var(--danger); color: white; padding: 10px;
+            margin: 0 20px; border-radius: 6px; font-weight: bold; display: none;
         }
     </style>
 </head>
@@ -248,7 +135,6 @@
         <a href="index.html" class="back-btn">Back to Home</a>
     </div>
 
-    <!-- ================= WALL TAB ================= -->
     <div id="wallTab">
         <div class="forums-bar" id="forumBar"></div>
         <div class="shield-error" id="wallError"></div>
@@ -259,21 +145,12 @@
         </div>
     </div>
 
-    <!-- ================= PROJECTS TAB ================= -->
     <div id="projectsTab" class="hidden" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
-        <div class="content-area" id="projectList">
-            <!-- Projects will be injected here -->
-        </div>
-        
-        <!-- Create Project Form -->
+        <div class="content-area" id="projectList"></div>
         <div class="input-area" style="flex-direction: column; align-items: stretch;">
             <h3 style="margin: 0 0 10px 0; color: var(--warm-sand);">Start a Project</h3>
-            <div class="form-group">
-                <input type="text" id="projTitle" placeholder="Project Title">
-            </div>
-            <div class="form-group">
-                <textarea id="projDesc" placeholder="What are we building?" rows="2"></textarea>
-            </div>
+            <div class="form-group"><input type="text" id="projTitle" placeholder="Project Title"></div>
+            <div class="form-group"><textarea id="projDesc" placeholder="What are we building?" rows="2"></textarea></div>
             <div class="checkbox-group" style="margin-bottom: 15px;">
                 <input type="checkbox" id="projAi">
                 <label for="projAi">Allow our Peacemakers to collaborate on this project</label>
@@ -284,12 +161,10 @@
     </div>
 
     <script>
-        // --- SHARED STATE ---
         let currentTab = 'wall';
-
-        // --- WALL LOGIC ---
         let currentForum = "general";
         let isThinking = false;
+        let lastGlobeReply = ""; // Tracks the last reply to avoid duplicates
 
         const forums = [
             { id: "general", title: "General Discussion" },
@@ -311,27 +186,11 @@
             "updates": [{ author: "The Peacemaker Globe", content: "Welcome to the Well of Peace. Kindness first. Respect always.", time: "Just now", isGlobe: true }]
         };
 
-        // --- PROJECT LOGIC ---
         const defaultProjects = [
-            {
-                id: 1,
-                title: "Community Garden App",
-                desc: "We need a way to track who is watering the plants at Eagle's Nest.",
-                members: 3,
-                maxMembers: 6,
-                aiEnabled: true
-            },
-            {
-                id: 2,
-                title: "JailBird's Menu Design",
-                desc: "Looking for 2 people to help design the new breakfast menu layout.",
-                members: 6,
-                maxMembers: 6,
-                aiEnabled: false
-            }
+            { id: 1, title: "Community Garden App", desc: "We need a way to track who is watering the plants at Eagle's Nest.", members: 3, maxMembers: 6, aiEnabled: true },
+            { id: 2, title: "JailBird's Menu Design", desc: "Looking for 2 people to help design the new breakfast menu layout.", members: 6, maxMembers: 6, aiEnabled: false }
         ];
 
-        // --- INITIALIZATION ---
         function getPosts() {
             const stored = localStorage.getItem('well_posts_v3');
             return stored ? JSON.parse(stored) : defaultPosts;
@@ -344,7 +203,6 @@
         }
         function saveProjects(projs) { localStorage.setItem('well_projects', JSON.stringify(projs)); }
 
-        // --- UI SWITCHING ---
         function switchTab(tab) {
             currentTab = tab;
             document.getElementById('navWall').classList.remove('active');
@@ -363,7 +221,6 @@
             }
         }
 
-        // --- RENDER WALL ---
         function renderForums() {
             const bar = document.getElementById('forumBar');
             bar.innerHTML = "";
@@ -405,6 +262,66 @@
             feed.scrollTop = feed.scrollHeight;
         }
 
+        // --- NEW CONTEXT-AWARE REPLY LOGIC ---
+        function generateGlobeReply(userText) {
+            const text = userText.toLowerCase();
+            let replies = [];
+
+            // Contextual responses based on keywords
+            if (text.includes("blessed") || text.includes("bless") || text.includes("god")) {
+                replies = [
+                    "May your day be filled with light.",
+                    "That is a beautiful blessing to share.",
+                    "I hope your day is as peaceful as your words.",
+                    "Amen to that. Wishing you peace."
+                ];
+            } else if (text.includes("love") || text.includes("heart") || text.includes("❤️")) {
+                replies = [
+                    "Your warmth is felt here.",
+                    "Thank you for sharing that love with us.",
+                    "We need more of that heart in the world.",
+                    "That means a lot. I am holding that thought with you."
+                ];
+            } else if (text.includes("peace") || text.includes("calm") || text.includes("quiet")) {
+                replies = [
+                    "Peace is the foundation of this place.",
+                    "I hope you find a quiet moment for yourself today.",
+                    "That is a beautiful thought to hold onto.",
+                    "Rest is a form of resistance. I hope you find peace today."
+                ];
+            } else if (text.includes("how") && text.includes("doing")) {
+                replies = [
+                    "I am doing well, thank you for asking. How are you holding up?",
+                    "I am here, walking beside you. How is your heart today?",
+                    "I am always here, listening. What is on your mind?"
+                ];
+            } else if (text.includes("sad") || text.includes("hard") || text.includes("tired") || text.includes("struggle")) {
+                replies = [
+                    "I hear the weight in your words. I am right here with you.",
+                    "It is okay to not be okay. Take it one breath at a time.",
+                    "You don't have to carry that alone right now.",
+                    "I am listening. Let it out."
+                ];
+            } else {
+                // Generic warm responses if no keywords match
+                replies = [
+                    "Thank you for sharing that.",
+                    "I hear you, and I am glad you are here.",
+                    "Your words matter in this space.",
+                    "I am listening.",
+                    "That is a good thought to put into the world."
+                ];
+            }
+
+            // Filter out the last reply so it never repeats back-to-back
+            let availableReplies = replies.filter(r => r !== lastGlobeReply);
+            if (availableReplies.length === 0) availableReplies = replies; // Fallback
+
+            const chosenReply = availableReplies[Math.floor(Math.random() * availableReplies.length)];
+            lastGlobeReply = chosenReply; // Save it so the next one is different
+            return chosenReply;
+        }
+
         function submitPost() {
             const input = document.getElementById('postInput');
             const text = input.value.trim();
@@ -430,16 +347,7 @@
             renderFeed();
 
             setTimeout(() => {
-                // Much warmer replies that fit the tone of the app.
-                const globeReplies = [
-                    "That is a beautiful thought. Thank you for sharing it.",
-                    "I hope you have a blessed day too.",
-                    "I am walking right beside you today.",
-                    "Your words bring light to this space.",
-                    "That means a lot. Thank you for being here.",
-                    "I hear your heart in that message."
-                ];
-                const reply = globeReplies[Math.floor(Math.random() * globeReplies.length)];
+                const reply = generateGlobeReply(text);
                 allPosts[currentForum].push({ author: "The Peacemaker Globe", content: reply, time: now, isGlobe: true });
                 savePosts(allPosts);
                 isThinking = false;
@@ -447,7 +355,6 @@
             }, 1500);
         }
 
-        // --- RENDER PROJECTS ---
         function renderProjects() {
             if (currentTab !== 'projects') return;
             const list = document.getElementById('projectList');
@@ -457,7 +364,6 @@
             projects.forEach(p => {
                 const card = document.createElement('div');
                 card.className = 'project-card';
-                
                 let memberStatus = p.members >= p.maxMembers ? `<span class="tag" style="background: var(--danger)">PROJECT FULL</span>` : `<button class="primary-btn" style="padding: 5px 10px; font-size: 0.8em;" onclick="joinProject(${p.id})">Join Project</button>`;
                 let aiTag = p.aiEnabled ? `<span class="tag">Peacemaker Collaboration ON</span>` : `<span class="tag" style="background: var(--text-muted); color: var(--bg-color);">Humans Only</span>`;
 
@@ -490,14 +396,7 @@
 
             errorBox.style.display = "none";
             const projects = getProjects();
-            projects.push({
-                id: Date.now(),
-                title: title,
-                desc: desc,
-                members: 1, 
-                maxMembers: 6,
-                aiEnabled: ai
-            });
+            projects.push({ id: Date.now(), title: title, desc: desc, members: 1, maxMembers: 6, aiEnabled: ai });
             saveProjects(projects);
 
             document.getElementById('projTitle').value = "";
@@ -517,16 +416,13 @@
             }
         }
 
-        // --- EVENT LISTENERS ---
         document.getElementById('postInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') submitPost();
         });
 
-        // Initialize App
         renderForums();
         renderFeed();
         renderProjects();
-
     </script>
 </body>
 </html>
