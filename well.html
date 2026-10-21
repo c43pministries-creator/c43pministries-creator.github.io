@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Well of Peace</title>
+    <title>The Well of Peace (v3)</title>
     <style>
         :root {
             --bg-color: #1a1817;
@@ -163,7 +163,6 @@
     </div>
 
     <script>
-        // YOUR CLOUD SERVER URL
         const API_URL = "https://peacemaker-api.onrender.com";
 
         let currentTab = 'wall';
@@ -222,12 +221,23 @@
             });
         }
 
-        // Fetch posts from the Cloud Server
+        // Helper function to format the timestamp from the database
+        function formatTime(timestamp) {
+            if (!timestamp) return "Just now";
+            const date = new Date(timestamp);
+            return date.toLocaleString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+        }
+
         async function renderFeed() {
             if (currentTab !== 'wall') return;
             const feed = document.getElementById('feed');
             
-            // Only show "Waking up" if the feed is empty (to prevent flashing)
             if (feed.innerHTML.trim() === "" || feed.innerHTML.includes("Waking up")) {
                 feed.innerHTML = "<div class='thinking'>Waking up the server... this might take up to 50 seconds.</div>";
             }
@@ -245,10 +255,14 @@
                         const card = document.createElement('div');
                         const isGlobe = p.author === "The Peacemaker Globe";
                         card.className = `post-card ${isGlobe ? 'globe' : ''}`;
+                        
+                        // Use the real timestamp from the database!
+                        const timeDisplay = formatTime(p.timestamp);
+
                         card.innerHTML = `
                             <div class="post-meta">
                                 <span class="author-name">${p.author}</span>
-                                <span>Just now</span>
+                                <span>${timeDisplay}</span>
                             </div>
                             <div class="post-content">${p.content}</div>
                         `;
@@ -305,10 +319,9 @@
             input.value = "";
             isThinking = true;
             sendBtn.disabled = true;
-            renderFeed(); // Show the thinking bubble immediately
+            renderFeed();
 
             try {
-                // 1. Send the user's post to the Cloud API
                 await fetch(`${API_URL}/posts`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -319,7 +332,6 @@
                     })
                 });
 
-                // 2. Wait a moment, then send the Globe's reply to the Cloud API
                 setTimeout(async () => {
                     const reply = generateGlobeReply(text);
                     await fetch(`${API_URL}/posts`, {
@@ -404,7 +416,6 @@
             if (e.key === 'Enter') submitPost();
         });
 
-        // Force the page to wait until it's fully loaded before fetching from the cloud
         window.addEventListener('DOMContentLoaded', () => {
             renderForums();
             renderFeed();
