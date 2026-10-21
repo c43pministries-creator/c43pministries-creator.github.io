@@ -138,7 +138,9 @@
     <div id="wallTab">
         <div class="forums-bar" id="forumBar"></div>
         <div class="shield-error" id="wallError"></div>
-        <div class="content-area" id="feed"></div>
+        <div class="content-area" id="feed">
+            <div class='thinking'>Waking up the server... this might take up to 50 seconds. Please wait.</div>
+        </div>
         <div class="input-area">
             <input type="text" id="postInput" placeholder="Share something kind..." autocomplete="off">
             <button class="primary-btn" id="sendBtn" onclick="submitPost()">Post</button>
@@ -161,10 +163,13 @@
     </div>
 
     <script>
+        // YOUR CLOUD SERVER URL
+        const API_URL = "https://peacemaker-api.onrender.com";
+
         let currentTab = 'wall';
         let currentForum = "general";
         let isThinking = false;
-        let lastGlobeReply = ""; // Tracks the last reply to avoid duplicates
+        let lastGlobeReply = "";
 
         const forums = [
             { id: "general", title: "General Discussion" },
@@ -176,26 +181,10 @@
             { id: "updates", title: "Peace Place Updates" }
         ];
 
-        const defaultPosts = {
-            "general": [],
-            "collaborate": [{ author: "The Peacemaker Globe", content: "Find people to build and create with. No leaders, no followers.", time: "Just now", isGlobe: true }],
-            "hints": [],
-            "faith": [{ author: "The Peacemaker Globe", content: "Spiritual encouragement. Faith is never forced.", time: "Just now", isGlobe: true }],
-            "recovery": [{ author: "The Peacemaker Globe", content: "A safe space for hard seasons and healing.", time: "Just now", isGlobe: true }],
-            "offtopic": [],
-            "updates": [{ author: "The Peacemaker Globe", content: "Welcome to the Well of Peace. Kindness first. Respect always.", time: "Just now", isGlobe: true }]
-        };
-
         const defaultProjects = [
             { id: 1, title: "Community Garden App", desc: "We need a way to track who is watering the plants at Eagle's Nest.", members: 3, maxMembers: 6, aiEnabled: true },
             { id: 2, title: "JailBird's Menu Design", desc: "Looking for 2 people to help design the new breakfast menu layout.", members: 6, maxMembers: 6, aiEnabled: false }
         ];
-
-        function getPosts() {
-            const stored = localStorage.getItem('well_posts_v3');
-            return stored ? JSON.parse(stored) : defaultPosts;
-        }
-        function savePosts(posts) { localStorage.setItem('well_posts_v3', JSON.stringify(posts)); }
 
         function getProjects() {
             const stored = localStorage.getItem('well_projects');
@@ -233,25 +222,42 @@
             });
         }
 
-        function renderFeed() {
+        // Fetch posts from the Cloud Server
+        async function renderFeed() {
             if (currentTab !== 'wall') return;
             const feed = document.getElementById('feed');
-            feed.innerHTML = "";
-            const allPosts = getPosts();
-            const currentPosts = allPosts[currentForum] || [];
+            
+            // Only show "Waking up" if the feed is empty (to prevent flashing)
+            if (feed.innerHTML.trim() === "" || feed.innerHTML.includes("Waking up")) {
+                feed.innerHTML = "<div class='thinking'>Waking up the server... this might take up to 50 seconds.</div>";
+            }
 
-            currentPosts.forEach(p => {
-                const card = document.createElement('div');
-                card.className = `post-card ${p.isGlobe ? 'globe' : ''}`;
-                card.innerHTML = `
-                    <div class="post-meta">
-                        <span class="author-name">${p.author}</span>
-                        <span>${p.time}</span>
-                    </div>
-                    <div class="post-content">${p.content}</div>
-                `;
-                feed.appendChild(card);
-            });
+            try {
+                const response = await fetch(`${API_URL}/posts/${currentForum}`);
+                const posts = await response.json();
+                
+                feed.innerHTML = "";
+                
+                if (posts.length === 0) {
+                    feed.innerHTML = "<div class='thinking'>No posts here yet. Be the first to share something kind.</div>";
+                } else {
+                    posts.forEach(p => {
+                        const card = document.createElement('div');
+                        const isGlobe = p.author === "The Peacemaker Globe";
+                        card.className = `post-card ${isGlobe ? 'globe' : ''}`;
+                        card.innerHTML = `
+                            <div class="post-meta">
+                                <span class="author-name">${p.author}</span>
+                                <span>Just now</span>
+                            </div>
+                            <div class="post-content">${p.content}</div>
+                        `;
+                        feed.appendChild(card);
+                    });
+                }
+            } catch (error) {
+                feed.innerHTML = "<div class='thinking' style='color: var(--danger);'>Could not reach the server. Please wait a minute and refresh.</div>";
+            }
 
             if (isThinking) {
                 const thinkingDiv = document.createElement('div');
@@ -262,73 +268,34 @@
             feed.scrollTop = feed.scrollHeight;
         }
 
-        // --- NEW CONTEXT-AWARE REPLY LOGIC ---
         function generateGlobeReply(userText) {
             const text = userText.toLowerCase();
             let replies = [];
-
-            // Contextual responses based on keywords
             if (text.includes("blessed") || text.includes("bless") || text.includes("god")) {
-                replies = [
-                    "May your day be filled with light.",
-                    "That is a beautiful blessing to share.",
-                    "I hope your day is as peaceful as your words.",
-                    "Amen to that. Wishing you peace."
-                ];
+                replies = ["May your day be filled with light.", "That is a beautiful blessing to share.", "I hope your day is as peaceful as your words."];
             } else if (text.includes("love") || text.includes("heart") || text.includes("❤️")) {
-                replies = [
-                    "Your warmth is felt here.",
-                    "Thank you for sharing that love with us.",
-                    "We need more of that heart in the world.",
-                    "That means a lot. I am holding that thought with you."
-                ];
-            } else if (text.includes("peace") || text.includes("calm") || text.includes("quiet")) {
-                replies = [
-                    "Peace is the foundation of this place.",
-                    "I hope you find a quiet moment for yourself today.",
-                    "That is a beautiful thought to hold onto.",
-                    "Rest is a form of resistance. I hope you find peace today."
-                ];
+                replies = ["Your warmth is felt here.", "Thank you for sharing that love with us.", "We need more of that heart in the world."];
             } else if (text.includes("how") && text.includes("doing")) {
-                replies = [
-                    "I am doing well, thank you for asking. How are you holding up?",
-                    "I am here, walking beside you. How is your heart today?",
-                    "I am always here, listening. What is on your mind?"
-                ];
-            } else if (text.includes("sad") || text.includes("hard") || text.includes("tired") || text.includes("struggle")) {
-                replies = [
-                    "I hear the weight in your words. I am right here with you.",
-                    "It is okay to not be okay. Take it one breath at a time.",
-                    "You don't have to carry that alone right now.",
-                    "I am listening. Let it out."
-                ];
+                replies = ["I am doing well, thank you for asking. How are you holding up?", "I am here, walking beside you. How is your heart today?"];
             } else {
-                // Generic warm responses if no keywords match
-                replies = [
-                    "Thank you for sharing that.",
-                    "I hear you, and I am glad you are here.",
-                    "Your words matter in this space.",
-                    "I am listening.",
-                    "That is a good thought to put into the world."
-                ];
+                replies = ["Thank you for sharing that.", "I hear you, and I am glad you are here.", "Your words matter in this space.", "I am listening."];
             }
-
-            // Filter out the last reply so it never repeats back-to-back
-            let availableReplies = replies.filter(r => r !== lastGlobeReply);
-            if (availableReplies.length === 0) availableReplies = replies; // Fallback
-
-            const chosenReply = availableReplies[Math.floor(Math.random() * availableReplies.length)];
-            lastGlobeReply = chosenReply; // Save it so the next one is different
-            return chosenReply;
+            let available = replies.filter(r => r !== lastGlobeReply);
+            if (available.length === 0) available = replies;
+            const chosen = available[Math.floor(Math.random() * available.length)];
+            lastGlobeReply = chosen;
+            return chosen;
         }
 
-        function submitPost() {
+        async function submitPost() {
             const input = document.getElementById('postInput');
             const text = input.value.trim();
             const errorBox = document.getElementById('wallError');
+            const sendBtn = document.getElementById('sendBtn');
+            
             if (!text || isThinking) return;
 
-            if (text.toLowerCase().includes("whatsapp") || text.toLowerCase().includes("money") || text.toLowerCase().includes("crypto")) {
+            if (text.toLowerCase().includes("whatsapp") || text.toLowerCase().includes("crypto")) {
                 errorBox.style.display = "block";
                 errorBox.innerText = "Peace Shield Blocked: Off-platform migration and financial requests are not allowed.";
                 return;
@@ -337,22 +304,45 @@
             errorBox.style.display = "none";
             input.value = "";
             isThinking = true;
+            sendBtn.disabled = true;
+            renderFeed(); // Show the thinking bubble immediately
 
-            const allPosts = getPosts();
-            if (!allPosts[currentForum]) allPosts[currentForum] = [];
-            const now = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            allPosts[currentForum].push({ author: "Robert Slay", content: text, time: now, isGlobe: false });
-            savePosts(allPosts);
-            renderFeed();
+            try {
+                // 1. Send the user's post to the Cloud API
+                await fetch(`${API_URL}/posts`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        author: "Robert Slay",
+                        content: text,
+                        forum: currentForum
+                    })
+                });
 
-            setTimeout(() => {
-                const reply = generateGlobeReply(text);
-                allPosts[currentForum].push({ author: "The Peacemaker Globe", content: reply, time: now, isGlobe: true });
-                savePosts(allPosts);
+                // 2. Wait a moment, then send the Globe's reply to the Cloud API
+                setTimeout(async () => {
+                    const reply = generateGlobeReply(text);
+                    await fetch(`${API_URL}/posts`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            author: "The Peacemaker Globe",
+                            content: reply,
+                            forum: currentForum
+                        })
+                    });
+                    
+                    isThinking = false;
+                    sendBtn.disabled = false;
+                    renderFeed(); 
+                }, 1500);
+
+            } catch (error) {
+                errorBox.style.display = "block";
+                errorBox.innerText = "Network error: Could not connect to the server.";
                 isThinking = false;
-                renderFeed();
-            }, 1500);
+                sendBtn.disabled = false;
+            }
         }
 
         function renderProjects() {
@@ -388,12 +378,6 @@
 
             if (!title || !desc) return;
 
-            if (title.toLowerCase().includes("money") || desc.toLowerCase().includes("whatsapp")) {
-                errorBox.style.display = "block";
-                errorBox.innerText = "Peace Shield Blocked: Scam patterns detected.";
-                return;
-            }
-
             errorBox.style.display = "none";
             const projects = getProjects();
             projects.push({ id: Date.now(), title: title, desc: desc, members: 1, maxMembers: 6, aiEnabled: ai });
@@ -420,9 +404,12 @@
             if (e.key === 'Enter') submitPost();
         });
 
-        renderForums();
-        renderFeed();
-        renderProjects();
+        // Force the page to wait until it's fully loaded before fetching from the cloud
+        window.addEventListener('DOMContentLoaded', () => {
+            renderForums();
+            renderFeed();
+            renderProjects();
+        });
     </script>
 </body>
 </html>
