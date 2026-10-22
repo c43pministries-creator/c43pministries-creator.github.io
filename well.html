@@ -306,12 +306,12 @@
                     })
                 });
 
-                // Wait for the Worker to reply, then reload
+                                // Wait for the Worker to reply, then reload
                 setTimeout(() => {
                     isThinking = false;
                     sendBtn.disabled = false;
                     renderFeed(); 
-                }, 5000); // 5 seconds gives you time to type in the terminal
+                }, 20000); // 20 seconds gives the local AI time to think
 
             } catch (error) {
                 errorBox.style.display = "block";
