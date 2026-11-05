@@ -3,114 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Peacemaker - Founding Supporter Campaign</title>
+    <title>The Peace Place | Places Where Dignity Is the Default</title>
     <style>
+        /* Warm, Peaceful Theme */
+        :root {
+            --bg-color: #1a1817;
+            --text-main: #f4f1ea;
+            --text-muted: #b8b0a1;
+            --soft-clay: #8b7355;
+            --warm-sand: #e3c29d;
+            --card-bg: #24211f;
+            --danger: #d95d5d;
+        }
+
         body {
-            background-color: #1A1A1A;
-            color: #F4F1EA;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
             margin: 0;
             padding: 0;
-            line-height: 1.6;
         }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 40px 20px;
         }
-        h1, h2, h3 {
-            color: #D4AF37;
+
+        header {
             text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--soft-clay);
+            padding-bottom: 30px;
         }
+
+        /* NEW: Logo Styling */
+        .logo {
+            width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--warm-sand);
+            background-color: white; /* If the image has a transparent background, this makes it pop */
+        }
+
         h1 {
+            color: var(--warm-sand);
             font-size: 2.5em;
             margin-bottom: 10px;
-        }
-        h2 {
-            font-size: 1.8em;
-            margin-top: 40px;
-        }
-        p {
-            font-size: 1.1em;
-            margin-bottom: 20px;
-        }
-        .highlight-box {
-            background-color: #2A2A2A;
-            border: 2px solid #D4AF37;
-            border-radius: 10px;
-            padding: 30px;
-            margin: 40px 0;
-            text-align: center;
-        }
-        .highlight-box h3 {
             margin-top: 0;
         }
-        .btn {
+
+        .tagline {
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 1.2em;
+        }
+
+        .motto {
+            font-weight: bold;
+            color: var(--warm-sand);
+            letter-spacing: 1px;
+            margin-top: 15px;
+        }
+
+        h2 {
+            color: var(--warm-sand);
+            border-bottom: 1px solid var(--soft-clay);
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        h3 {
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .highlight {
+            color: var(--warm-sand);
+            font-weight: bold;
+        }
+
+        /* NEW: Well of Peace Button */
+        .well-btn-container {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .well-btn {
             display: inline-block;
-            background-color: #D4AF37;
-            color: #000000;
-            text-decoration: none;
-            padding: 15px 40px;
+            background-color: var(--warm-sand);
+            color: var(--bg-color);
+            padding: 15px 30px;
             font-size: 1.2em;
             font-weight: bold;
-            border-radius: 5px;
-            margin-top: 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .well-btn:hover {
+            background-color: #f0d5b5;
+            transform: translateY(-2px);
+        }
+
+        /* App and Feature Cards */
+        .feature-list, .place-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li, .place-list li {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--warm-sand);
+        }
+
+        .feature-list strong, .place-list strong {
+            color: var(--warm-sand);
+            font-size: 1.1em;
+        }
+
+        /* Form Styling */
+        .form-container {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--warm-sand);
+        }
+
+        input[type="text"], input[type="email"], textarea {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--soft-clay);
+            color: var(--text-main);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus, input[type="email"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--warm-sand);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input {
+            width: auto;
+        }
+
+        button {
+            background-color: var(--warm-sand);
+            color: var(--bg-color);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
             transition: background-color 0.3s;
         }
-        .btn:hover {
-            background-color: #E5C55A;
+
+        button:hover {
+            background-color: #f0d5b5;
         }
-        .motto {
+
+        .support {
             text-align: center;
-            font-style: italic;
-            color: #888;
-            margin-bottom: 40px;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 8px;
+            margin-top: 40px;
         }
-        ul {
-            background: #2A2A2A;
-            padding: 20px 40px;
-            border-radius: 10px;
+
+        .support a {
+            color: var(--warm-sand);
+            font-weight: bold;
+            text-decoration: none;
         }
-        li {
-            margin-bottom: 10px;
+
+        .support a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid var(--soft-clay);
+            color: var(--text-muted);
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>The Peacemaker</h1>
-    <p class="motto">"Kindness first. Respect always. Faith never forced."</p>
+    <header>
+        <!-- CHANGE THE SRC TO THE EXACT FILENAME YOU UPLOADED -->
+        <img src="peaceplacelogo.jpg" alt="The Peace Place Logo" class="logo">
+        <h1>The Peace Place</h1>
+        <div class="tagline">Places Where Dignity Is the Default.</div>
+        <div class="motto">Kindness first. Respect always. Faith never forced.</div>
+    </header>
 
-    <p>I am Robert Slay, founder of C43P Ministries. I am 50 years old, and I was recently diagnosed with Autism. My whole life, I struggled in traditional classrooms. I failed college algebra not because I didn't understand the math, but because I couldn't "show my work" the way the teachers demanded. My brain connects dots differently.</p>
-    
-    <p>A year ago, I discovered that AI could explain concepts to me in seconds that teachers couldn't explain in years. That realization changed everything. I built the software for a handheld AI companion on a $125 laptop and a $50 phone my younger brother bought for me, while navigating homelessness and protecting my boundaries from people trying to take advantage of my kindness.</p>
+    <p>The Peace Place creates sanctuary—in your pocket, in your neighborhood, and in your heart. We build tools that protect you without ever seeing your data. We are building spaces where anyone without a home, or anyone healing from abuse, can get free coffee and a moment of calm. Faith inspires everything we do. But kindness is the only requirement to belong here.</p>
 
-    <p><strong>I am building The Peacemaker.</strong> It is not a toy, and it is not a corporate data-harvesting device. It is a completely private, offline-first device designed for children and adults who learn in non-traditional ways. It is a tutor, a journal, and a safety companion.</p>
-
-    <div class="highlight-box">
-        <h3>The Founder's Circle</h3>
-        <p>I am raising money to build the first physical prototypes. <strong>Any donation of $25 or more</strong> will receive one of the first production Peacemaker devices as soon as they are built and tested.</p>
-        <p>You are not just buying a gadget; you are helping me build a tool that gives neurodivergent learners the education and safety they deserve.</p>
-        <a href="https://cash.app/$RobertSlay1" class="btn" target="_blank">Donate via Cash App</a>
-        <br><br>
-        <p style="font-size: 0.9em; color: #888;">(If you prefer another payment method, please email triplep2ok@gmail.com)</p>
+    <!-- NEW: Campaign Button -->
+    <div class="well-btn-container">
+        <a href="peacemaker.html" class="well-btn" style="background-color: #D4AF37; color: #000000;">Support The Peacemaker Campaign</a>
     </div>
 
-    <h2>How the Funds Will Be Used</h2>
-    <ul>
-        <li>Raspberry Pi boards and touchscreens</li>
-        <li>Cellular modems (so the device can dial emergency services for safety)</li>
-        <li>3D printing the physical casing</li>
-        <li>Batteries and charging components</li>
+    <!-- NEW: Well of Peace Button -->
+    <div class="well-btn-container">
+        <a href="well.html" class="well-btn">Enter The Well of Peace</a>
+    </div>
+
+    <h2>The Core: The Peacemaker</h2>
+    <p><span class="highlight">The Peacemaker (In Active Development)</span></p>
+    <p>The Peacemaker is not just a chatbot. It is a companion, a business partner, and a teacher for people who do not learn by traditional methods. It is a personal organizer. It remembers what you teach it. It helps you build your own apps. It even includes <strong>Password Peace</strong>, a stateless password generator with no storage and no tracking.</p>
+    <p>And it is the observer of this ecosystem. The Peacemaker’s built-in <strong>Peace Shield</strong> protects the community, prevents scams, and ensures that dignity is the default.</p>
+    <p><em>Beta access coming soon.</em></p>
+
+    <h2>More Sanctuary Coming</h2>
+    <ul class="feature-list">
+        <li><strong>🛡️ Peace Shield</strong> – The on-device scam and threat detection engine running inside The Peacemaker. It protects you without reading your private journals.</li>
+        <li><strong>🎥 Missing Peace Intended</strong> – AI video generator with built-in deepfake prevention. Invite-only during early development. (Commercial rights available for purchase later—join the waitlist to help shape pricing.)</li>
+        <li><strong>💞 Chosen Peace</strong> – Faith-friendly dating. Zero tolerance for scams or harassment.</li>
+        <li><strong>☕ Perkin' Peace Coffee App</strong> – Loyalty program and free drink tracker for the café.</li>
+        <li><strong>🎟️ Tickets & Towns</strong> – Discover local events that build real community.</li>
+        <li><strong>🏠 Shield Home</strong> – Smart home protection for survivors of abuse.</li>
+        <li><strong>🐦 JailBird's App</strong> – Order ahead, see the specials, and support the mission.</li>
     </ul>
 
-    <h2>A Note on Safety</h2>
-    <p>The Peacemaker is a companion device, not a replacement for a dedicated medical alert system. While it is designed with a cellular module to dial emergency services, it is a DIY hardware project and is not certified by the FCC as a medical device.</p>
+    <h2>Places Where Dignity Is the Default</h2>
+    <ul class="place-list">
+        <li><strong>Perkin' Peace Coffee</strong> – Free coffee and snacks for anyone without a home and for survivors of abuse. Employees earn a thriving wage—many hired directly from shelters. <em>Opening First.</em></li>
+        <li><strong>JailBird's Restaurant</strong> – Jail-inspired cuisine served with dignity. Breakfast, lunch, and dinner: from chicken fried steak and eggs to build-your-own ramen, smoked meats, and more. My homeless buddy Robert—20+ years in the restaurant industry—is teaching me new smoking methods. We both did time. Now we're building something worth serving. Every meal helps fund the shelters. <em>Opening Next.</em></li>
+        <li><strong>Eagle's Nest Shelter</strong> – Safe housing for individuals and families experiencing homelessness. <em>Coming soon.</em></li>
+        <li><strong>Refuge Wing</strong> – A separate, secure shelter wing for survivors of mental or physical abuse. <em>Coming soon.</em></li>
+    </ul>
 
-    <div style="text-align: center; margin-top: 60px; padding-top: 20px; border-top: 1px solid #333;">
-        <p>&copy; 2026 C43P Ministries. All rights reserved.</p>
+    <h2>Request an Invitation</h2>
+    <div class="form-container">
+        <p>We are an invitation-only community. We do not track you, and we do not sell your data. Please answer honestly. Robert reviews every application personally.</p>
+        
+        <!-- REPLACE THE ACTION LINK BELOW WITH YOUR FORMSPREE LINK -->
+        <form action="https://formspree.io/f/YOUR_FORMSPREE_ENDPOINT" method="POST">
+            
+            <div class="form-group">
+                <label for="name">Your Name (or the name you wish to be called):</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Your Email Address:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="humanCheck">What is 3 + 4?</label>
+                <input type="text" id="humanCheck" name="humanCheck" required>
+            </div>
+
+            <div class="form-group">
+                <label for="peaceMeaning">In your own words, what does 'peace' mean to you?</label>
+                <textarea id="peaceMeaning" name="peaceMeaning" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="rules" name="rules" required>
+                <label for="rules" style="margin-bottom: 0; font-weight: normal;">I agree to follow the rules of The Peace Place.</label>
+            </div>
+
+            <button type="submit">Submit Application</button>
+        </form>
     </div>
+
+    <div class="support">
+        <h2>Help Us Open Our Doors</h2>
+        <p>The Peace Place is being built by one person with a big vision and a small budget. Every app, every coffee cup, every shelter bed is coming—just not all at once. If you'd like to help us open our doors faster, we'd be honored.</p>
+        <p>To support the mission, please reach out directly at <a href="mailto:c43pministries@gmail.com">c43pministries@gmail.com</a>.</p>
+    </div>
+
+    <footer>
+        <p>© 2026 The Peace Place</p>
+        <p>Kindness first. Respect always. Faith never forced.</p>
+    </footer>
 </div>
 
 </body>
