@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C² = P Keyboard</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⌨️</text></svg>">
+    <style>
+        :root {
+            --bg-color: #121212;
+            --key-bg: #1e1e1e;
+            --key-color: #d4af37;
+            --key-active: #333333;
+            --text-color: #ffffff;
+            --accent-green: #4caf50;
+            --input-bg: #000000;
+            --snippet-bg: #2a2a2a;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            margin: 0;
+            user-select: none;
+        }
+
+        h1 { color: var(--key-color); margin-bottom: 5px; font-size: 1.5rem; }
+        .status { font-size: 0.9rem; color: var(--accent-green); margin-bottom: 15px; height: 20px; }
+
+        .input-container {
+            display: flex;
+            width: 100%;
+            max-width: 800px;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        #output-line {
+            flex-grow: 1;
+            background-color: var(--input-bg);
+            color: #fff;
+            border: 2px solid var(--key-color);
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-family: monospace;
+            outline: none;
+        }
+
+        .copy-btn {
+            background-color: var(--key-color);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            padding: 0 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            box-shadow: 0 4px 0 #8c7324;
+        }
+
+        .copy-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #000; }
+
+        .layer-title {
+            align-self: flex-start;
+            margin: 15px 0 5px 10px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-right: 10px;
+        }
+
+        .add-snippet-btn {
+            background-color: var(--snippet-bg);
+            color: var(--key-color);
+            border: 1px solid var(--key-color);
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+
+        .keyboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 8px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+
+        .key {
+            background-color: var(--key-bg);
+            color: var(--key-color);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px 5px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            box-shadow: 0 4px 0 #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 25px;
+        }
+
+        .key:active { transform: translateY(4px); box-shadow: 0 0 0 #000; background-color: var(--key-active); }
+        .key-text { color: #fff; font-size: 0.95rem; }
+        .key-action { background-color: #2a2a2a; color: #ff5252; border-color: #ff5252; }
+        .key-space { background-color: #2a2a2a; color: #fff; grid-column: span 3; }
+        
+        /* Snippet Styling */
+        .key-snippet {
+            background-color: var(--snippet-bg);
+            color: #00ffcc; /* Matrix green/blue for snippets */
+            font-size: 0.85rem;
+            text-align: left;
+            padding: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>C² = P Keyboard</h1>
+    <div class="status" id="status">Type using the keys below</div>
+
+    <div class="input-container">
+        <input type="text" id="output-line" placeholder="Tap keys to type here..." autocomplete="off" spellcheck="false">
+        <button class="copy-btn" id="copy-btn">Copy Line</button>
+    </div>
+
+    <div class="layer-title">
+        <span>Snippet Bar</span>
+        <button class="add-snippet-btn" onclick="addSnippet()">+ Add Snippet</button>
+    </div>
+    <div class="keyboard-grid" id="snippet-grid"></div>
+
+    <div class="layer-title">Greek & Math</div>
+    <div class="keyboard-grid" id="greek-grid"></div>
+
+    <div class="layer-title">Logic & Set Theory</div>
+    <div class="keyboard-grid" id="logic-grid"></div>
+
+    <div class="layer-title">Code & Syntax</div>
+    <div class="keyboard-grid" id="syntax-grid"></div>
+
+    <div class="layer-title">Keywords & Terminal</div>
+    <div class="keyboard-grid" id="keyword-grid"></div>
+
+    <div class="layer-title">System Controls</div>
+    <div class="keyboard-grid" id="system-grid"></div>
+
+    <script>
+        const greekKeys = ['α', 'β', 'θ', 'λ', 'π', 'Σ', 'Δ', 'φ', '∞', '√', 'n²', 'n³', 'n⁴', 'nˣ'];
+        const logicKeys = ['∈', '⊆', '∪', '∩', '∀', '∃', '≈', '≠', '≤', '≥'];
+        const syntaxKeys = ['{', '}', '[', ']', '(', ')', '<', '>', '==', '!=', '&&', '||', '->', '=>', ';', ':', '"', "'"];
+        const keywordKeys = ['if', 'else', 'for', 'while', 'return', 'fn', 'let', 'mut', 'struct', 'impl', 'git', 'cargo', 'run', 'build', 'cd', 'ls'];
+        const systemKeys = ['Now', 'Backspace', 'Clear All', 'Space'];
+
+        const outputLine = document.getElementById('output-line');
+        const statusEl = document.getElementById('status');
+        const copyBtn = document.getElementById('copy-btn');
+        let statusTimeout;
+
+        // --- SNIPPET LOGIC ---
+        let snippets = JSON.parse(localStorage.getItem('c2p_snippets'));
+        if (!snippets) {
+            snippets = ['console.log()', 'fn main() {}', 'def ', 'import ', 'return;'];
+            localStorage.setItem('c2p_snippets', JSON.stringify(snippets));
+        }
+
+        function addSnippet() {
+            const newSnip = prompt("Enter the code snippet you want to save:");
+            if (newSnip && newSnip.trim() !== "") {
+                snippets.push(newSnip.trim());
+                localStorage.setItem('c2p_snippets', JSON.stringify(snippets));
+                renderSnippets();
+                statusEl.innerText = "Snippet added!";
+                statusEl.style.color = '#4caf50';
+            }
+        }
+
+        function renderSnippets() {
+            const container = document.getElementById('snippet-grid');
+            container.innerHTML = "";
+            snippets.forEach((snip, index) => {
+                const btn = document.createElement('div');
+                btn.className = 'key key-snippet';
+                btn.innerText = snip;
+                btn.title = snip; // Shows full text on hover
+                
+                btn.addEventListener('mousedown', (e) => { 
+                    e.preventDefault(); 
+                    outputLine.value += snip; 
+                    outputLine.focus();
+                });
+                btn.addEventListener('touchstart', (e) => { 
+                    e.preventDefault(); 
+                    outputLine.value += snip; 
+                    outputLine.focus();
+                });
+                
+                // Right click to delete a snippet
+                btn.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    if(confirm("Delete this snippet?")) {
+                        snippets.splice(index, 1);
+                        localStorage.setItem('c2p_snippets', JSON.stringify(snippets));
+                        renderSnippets();
+                    }
+                });
+
+                container.appendChild(btn);
+            });
+        }
+        // --------------------
+
+        function typeText(text) {
+            const startPos = outputLine.selectionStart;
+            const endPos = outputLine.selectionEnd;
+            const currentText = outputLine.value;
+            const isHighlighted = startPos !== endPos;
+
+            const wrapPairs = { '{': '}', '[': ']', '(': ')', '<': '>', '"': '"', "'": "'" };
+            
+            if (isHighlighted && wrapPairs[text]) {
+                const closingChar = wrapPairs[text];
+                const beforeText = currentText.substring(0, startPos);
+                const selectedText = currentText.substring(startPos, endPos);
+                const afterText = currentText.substring(endPos);
+
+                outputLine.value = `${beforeText}${text}${selectedText}${closingChar}${afterText}`;
+                const newCursorPos = startPos + text.length + selectedText.length + closingChar.length;
+                outputLine.setSelectionRange(newCursorPos, newCursorPos);
+                statusEl.innerText = `Wrapped in ${text}${closingChar}`;
+            } 
+            else if (!isHighlighted && (text === '"' || text === "'")) {
+                const beforeCursor = currentText.substring(0, startPos);
+                const afterCursor = currentText.substring(endPos);
+
+                if (afterCursor.startsWith(text)) {
+                    outputLine.setSelectionRange(startPos + 1, startPos + 1);
+                } else {
+                    outputLine.value = `${beforeCursor}${text}${text}${afterCursor}`;
+                    outputLine.setSelectionRange(startPos + 1, startPos + 1);
+                }
+                statusEl.innerText = `Smart Quote`;
+            } 
+            else {
+                const keywords = ['if', 'else', 'for', 'while', 'return', 'fn', 'let', 'mut', 'struct', 'impl', 'git', 'cargo', 'run', 'build', 'cd', 'ls'];
+                if (keywords.includes(text)) {
+                    outputLine.value += text + ' ';
+                } else {
+                    outputLine.value += text;
+                }
+                const newPos = outputLine.value.length;
+                outputLine.setSelectionRange(newPos, newPos);
+            }
+            
+            outputLine.focus();
+            clearTimeout(statusTimeout);
+            statusTimeout = setTimeout(() => {
+                statusEl.innerText = 'Type using the keys below';
+                statusEl.style.color = '#888';
+            }, 2000);
+        }
+
+        function handleSystemKey(action) {
+            if (action === 'Backspace') {
+                outputLine.value = outputLine.value.slice(0, -1);
+            } else if (action === 'Clear All') {
+                outputLine.value = '';
+            } else if (action === 'Space') {
+                outputLine.value += ' ';
+            }
+            outputLine.focus();
+        }
+
+        function insertNow() {
+            const now = new Date();
+            // Formats the time like: /* 10:30:45 AM */
+            const timeString = now.toLocaleTimeString('en-US', { hour12: true });
+            outputLine.value += `/* ${timeString} */ `;
+            outputLine.focus();
+            statusEl.innerText = "Present moment inserted.";
+            statusEl.style.color = '#4caf50';
+        }
+        copyBtn.addEventListener('click', () => {
+            if (outputLine.value === '') return;
+            navigator.clipboard.writeText(outputLine.value).then(() => {
+                statusEl.innerText = 'Line Copied to Clipboard!';
+                statusEl.style.color = '#4caf50';
+                clearTimeout(statusTimeout);
+                statusTimeout = setTimeout(() => {
+                    statusEl.innerText = 'Type using the keys below';
+                    statusEl.style.color = '#888';
+                }, 2000);
+            });
+        });
+
+        function renderGrid(keys, containerId, isText = false) {
+            const container = document.getElementById(containerId);
+            keys.forEach(key => {
+                const btn = document.createElement('div');
+                btn.className = isText ? 'key key-text' : 'key';
+                btn.innerText = key;
+                btn.addEventListener('mousedown', (e) => { e.preventDefault(); typeText(key); });
+                btn.addEventListener('touchstart', (e) => { e.preventDefault(); typeText(key); });
+                container.appendChild(btn);
+            });
+        }
+
+                function renderSystemControls() {
+            const container = document.getElementById('system-grid');
+            systemKeys.forEach(key => {
+                const btn = document.createElement('div');
+                btn.className = 'key key-text';
+                
+                // Add styling based on the key
+                if (key === 'Backspace' || key === 'Clear All') btn.classList.add('key-action');
+                if (key === 'Space') btn.classList.add('key-space');
+                if (key === 'Now') btn.classList.add('key-snippet'); // Gives it the cyan color
+                
+                btn.innerText = key;
+                
+                // Add the click listeners
+                btn.addEventListener('mousedown', (e) => { 
+                    e.preventDefault(); 
+                    if (key === 'Now') insertNow();
+                    else handleSystemKey(key); 
+                });
+                btn.addEventListener('touchstart', (e) => { 
+                    e.preventDefault(); 
+                    if (key === 'Now') insertNow();
+                    else handleSystemKey(key); 
+                });
+                
+                container.appendChild(btn);
+            });
+        }
+
+        // Initialize everything
+        renderSnippets();
+        renderGrid(greekKeys, 'greek-grid');
+        renderGrid(logicKeys, 'logic-grid');
+        renderGrid(syntaxKeys, 'syntax-grid');
+        renderGrid(keywordKeys, 'keyword-grid', true);
+        renderSystemControls();
+    </script>
+</body>
+</html>
