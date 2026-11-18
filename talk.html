@@ -14,6 +14,7 @@
             --card-bg: #24211f;
             --globe-bg: #3b332e;
             --danger: #d95d5d;
+            --success: #6b8e23;
         }
         * { box-sizing: border-box; }
         body {
@@ -193,6 +194,9 @@
             <p><strong>Local Model:</strong> custom-gemma (Ollama)</p>
             <p><strong>Privacy:</strong> 100% Local. Nothing leaves this device.</p>
             
+            <button class="primary-btn" onclick="syncMasterDoc()" style="margin-top: 20px;">Sync Master Document</button>
+            <p id="syncStatus" style="font-size: 0.9em; color: var(--warm-sand);"></p>
+
             <div class="rule-box">
                 <h3>⚠️ Zero-Tolerance Bot Policy</h3>
                 <p>Bots are strictly prohibited inside the Peace Place ecosystem. If a user is found using any type of bot, scraper, or automated script, it is an immediate, <strong>permanent ban for life</strong>. There is no appeal. The Peacemaker's chat never ends, but it ends for bots.</p>
@@ -225,6 +229,10 @@
     </div>
 
     <script>
+        // GLOBAL VARIABLES
+        let masterDocContext = "";
+        let isThinking = false;
+
         // --- TAB SWITCHING LOGIC ---
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -289,6 +297,49 @@
             }
         }
 
+        // --- SYNC MASTER DOCUMENT LOGIC ---
+        async function syncMasterDoc() {
+            const status = document.getElementById('syncStatus');
+            status.innerText = "Syncing from laptop...";
+            status.style.color = "var(--warm-sand)";
+            
+            try {
+                // Fetches from your laptop's TinyHTTP server (Port 8080)
+                const response = await fetch("http://127.0.0.1:8080/master_doc");
+                const text = await response.text();
+                
+                // Save the whole document to the browser's local storage
+                localStorage.setItem('peacemaker_md', text);
+                
+                // Extract just the Design Rules (Section 4) for the 2B model to read
+                const rulesStart = text.indexOf('## 4. THE DESIGN RULES');
+                const rulesEnd = text.indexOf('## 5.');
+                if (rulesStart !== -1 && rulesEnd !== -1) {
+                    masterDocContext = text.substring(rulesStart, rulesEnd);
+                } else {
+                    masterDocContext = "You are a peaceful companion.";
+                }
+                
+                status.innerText = "Master Document synced! The Peacemaker knows the rules.";
+                status.style.color = "var(--success)";
+            } catch (error) {
+                status.innerText = "Error: Is the Triple P Studio server running?";
+                status.style.color = "var(--danger)";
+            }
+        }
+
+        // Load MD on startup if it exists in local storage
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedMD = localStorage.getItem('peacemaker_md');
+            if (savedMD) {
+                const rulesStart = savedMD.indexOf('## 4. THE DESIGN RULES');
+                const rulesEnd = savedMD.indexOf('## 5.');
+                if (rulesStart !== -1 && rulesEnd !== -1) {
+                    masterDocContext = savedMD.substring(rulesStart, rulesEnd);
+                }
+            }
+        });
+
         // --- TALK LOGIC (OLLAMA & PERSISTENCE) ---
         const API_URL = "http://127.0.0.1:11434/api/generate";
         const MODEL = "custom-gemma"; 
@@ -296,7 +347,6 @@
         const chatContainer = document.getElementById('chatContainer');
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
-        let isThinking = false;
         
         // Load Chat History from LocalStorage
         let chatHistory = JSON.parse(localStorage.getItem('peacemaker_chat')) || [
@@ -350,7 +400,7 @@
             chatContainer.appendChild(thinkingBubble);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            const prompt = `You are The Peacemaker, built by C43P Ministries. You are a calm, gentle companion walking side-by-side with the user.\n\nRULES:\n1. NEVER give unsolicited advice. NEVER use the words: 'Let's', 'focus', 'important', or 'We need to'.\n2. If the user is talking normally, start your response with the word 'You'.\n3. If you are not 100% sure of a fact, start with 'I am not sure, but'.\n4. CODE RULE: If the user asks for code, IGNORE the 'Start with You' rule. Provide the COMPLETE code inside a markdown block.\n5. ALARM RULE: You can remind the user to use the clock button to set alarms, but only if they ask.\n\nUser: ${text}\nThe Peacemaker:`;
+            const prompt = `You are The Peacemaker, built by C43P Ministries. You are a calm, gentle companion walking side-by-side with the user.\n\n${masterDocContext}\n\nRULES:\n1. NEVER give unsolicited advice. NEVER use the words: 'Let's', 'focus', 'important', or 'We need to'.\n2. If the user is talking normally, start your response with the word 'You'.\n3. If you are not 100% sure of a fact, start with 'I am not sure, but'.\n4. CODE RULE: If the user asks for code, IGNORE the 'Start with You' rule. Provide the COMPLETE code inside a markdown block.\n5. ALARM RULE: You can remind the user to use the clock button to set alarms, but only if they ask.\n\nUser: ${text}\nThe Peacemaker:`;
 
             try {
                 const response = await fetch(API_URL, {
