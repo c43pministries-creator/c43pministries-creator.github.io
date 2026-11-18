@@ -162,12 +162,18 @@
         </div>
     </div>
 
+    <div style="text-align: center; margin-top: 20px; padding-bottom: 20px;">
+        <button onclick="syncMasterDoc()" class="primary-btn" style="width: auto; padding: 10px 20px; font-size: 0.9em; background-color: var(--card-bg); color: var(--warm-sand); border: 1px solid var(--warm-sand);">Sync Master Document for The Globe</button>
+        <p id="mdSyncStatus" style="font-size: 0.8em; color: var(--success); margin-top: 10px;"></p>
+    </div>
+
     <script>
         const API_URL = "https://peacemaker-api.onrender.com";
 
         let currentTab = 'wall';
         let currentForum = "general";
         let isThinking = false;
+        let masterDocContext = "";
 
         const forums = [
             { id: "general", title: "General Discussion" },
@@ -308,6 +314,7 @@
             renderFeed(); // Show the thinking bubble immediately
 
             try {
+                // Send the post to the server. The Worker will catch it.
                 await fetch(`${API_URL}/posts`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -318,11 +325,12 @@
                     })
                 });
 
+                // Wait for the Worker to reply, then reload
                 setTimeout(() => {
                     isThinking = false;
                     sendBtn.disabled = false;
                     renderFeed(); 
-                }, 20000); 
+                }, 20000); // 20 seconds gives the local AI time to think
 
             } catch (error) {
                 errorBox.style.display = "block";
@@ -387,6 +395,30 @@
             }
         }
 
+        async function syncMasterDoc() {
+            const status = document.getElementById('mdSyncStatus');
+            status.innerText = "Syncing from laptop...";
+            status.style.color = "var(--warm-sand)";
+            try {
+                const response = await fetch("http://127.0.0.1:8080/master_doc");
+                const text = await response.text();
+                localStorage.setItem('peacemaker_md', text);
+                
+                const rulesStart = text.indexOf('## 4. THE DESIGN RULES');
+                const rulesEnd = text.indexOf('## 5.');
+                if (rulesStart !== -1 && rulesEnd !== -1) {
+                    masterDocContext = text.substring(rulesStart, rulesEnd);
+                } else {
+                    masterDocContext = "You are The Peacemaker Globe.";
+                }
+                status.innerText = "Master Document synced! The Globe knows the rules.";
+                status.style.color = "var(--success)";
+            } catch (error) {
+                status.innerText = "Error: Is the Triple P Studio server running?";
+                status.style.color = "var(--danger)";
+            }
+        }
+
         document.getElementById('postInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') submitPost();
         });
@@ -395,12 +427,15 @@
             renderForums();
             renderFeed();
             renderProjects();
+
+            // Load saved MD if it exists
+            const savedMD = localStorage.getItem('peacemaker_md');
+            if (savedMD) {
+                const rulesStart = savedMD.indexOf('## 4. THE DESIGN RULES');
+                const rulesEnd = savedMD.indexOf('## 5.');
+                if (rulesStart !== -1 && rulesEnd !== -1) masterDocContext = savedMD.substring(rulesStart, rulesEnd);
+            }
         });
     </script>
-
-    <div style="text-align: center; margin-top: 20px; padding-bottom: 20px;">
-        <button onclick="syncMasterDoc()" class="primary-btn" style="width: auto; padding: 10px 20px; font-size: 0.9em; background-color: var(--card-bg); color: var(--warm-sand); border: 1px solid var(--warm-sand);">Sync Master Document for The Globe</button>
-        <p id="mdSyncStatus" style="font-size: 0.8em; color: var(--success); margin-top: 10px;"></p>
-    </div>
 </body>
 </html>
