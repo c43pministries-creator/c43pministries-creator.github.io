@@ -27,7 +27,6 @@
             overflow: hidden;
         }
         
-        /* Top Navigation */
         .top-nav {
             background-color: var(--bg-color);
             padding: 15px 20px;
@@ -41,7 +40,6 @@
             padding: 5px 15px; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.9em;
         }
         
-        /* Tab Content Area */
         .tab-content {
             flex: 1;
             display: none;
@@ -51,7 +49,6 @@
         }
         .tab-content.active { display: flex; }
 
-        /* --- TALK TAB --- */
         .chat-area {
             flex: 1; overflow-y: auto; padding: 20px;
             display: flex; flex-direction: column; gap: 15px;
@@ -78,7 +75,6 @@
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .icon-btn { background: none; border: none; font-size: 1.5em; cursor: pointer; color: var(--warm-sand); padding: 0 10px; }
 
-        /* --- JOURNAL & MEMORY TABS --- */
         .journal-container { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
         .journal-textarea {
             width: 100%; height: 200px; background-color: var(--card-bg);
@@ -92,7 +88,6 @@
         }
         .entry-date { font-size: 0.8em; color: var(--text-muted); margin-bottom: 5px; }
 
-        /* --- PASSWORDS TAB --- */
         .password-container { padding: 20px; text-align: center; }
         .password-box {
             background-color: var(--card-bg); padding: 20px; border-radius: 8px;
@@ -100,7 +95,6 @@
             border: 1px solid var(--soft-clay); word-break: break-all;
         }
 
-        /* --- MORE TAB CARDS --- */
         .more-card {
             background-color: var(--card-bg); border: 1px solid var(--soft-clay);
             border-radius: 8px; padding: 15px; margin-bottom: 15px;
@@ -110,7 +104,6 @@
         .more-card button { width: 100%; }
         .more-card input[type="text"] { width: 100%; padding: 10px; margin-bottom: 10px; background: var(--bg-color); border: 1px solid var(--soft-clay); color: white; border-radius: 4px; }
 
-        /* --- GUIDE & TUTORIALS --- */
         .guide-section { background-color: var(--card-bg); padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--warm-sand); }
         .guide-section h3 { margin-top: 0; color: var(--warm-sand); }
         .guide-subsection { margin-bottom: 15px; }
@@ -120,7 +113,6 @@
         .tutorial-step h3 { margin-top: 0; color: var(--text-main); }
         .tutorial-key { display: inline-block; background-color: var(--soft-clay); padding: 5px 10px; border-radius: 4px; font-size: 0.85em; margin-top: 10px; font-weight: bold; }
 
-        /* Bottom Navigation */
         .bottom-nav {
             background-color: var(--card-bg);
             display: flex; justify-content: space-around;
@@ -185,7 +177,6 @@
         <a href="index.html" class="back-btn">Back to Home</a>
     </div>
 
-    <!-- TALK TAB -->
     <div id="tab-talk" class="tab-content active">
         <div class="chat-area" id="chatContainer"></div>
         <div class="input-area">
@@ -195,7 +186,6 @@
         </div>
     </div>
 
-    <!-- JOURNAL TAB -->
     <div id="tab-journal" class="tab-content">
         <div class="journal-container">
             <p style="color: var(--text-muted); font-size: 0.9em;">Your journal is private. It is stored only on this device.</p>
@@ -204,12 +194,10 @@
         </div>
     </div>
 
-    <!-- MEMORY TAB -->
     <div id="tab-memory" class="tab-content">
         <div class="journal-container" id="memoryList"></div>
     </div>
 
-    <!-- PASSWORDS TAB -->
     <div id="tab-passwords" class="tab-content">
         <div class="password-container">
             <h2 style="color: var(--warm-sand); margin-top: 0;">Password Peace</h2>
@@ -219,7 +207,6 @@
         </div>
     </div>
 
-    <!-- NAVIGATOR TAB -->
     <div id="tab-navigator" class="tab-content">
         <div class="journal-container" style="text-align: center; padding-top: 50px;">
             <h2 style="color: var(--warm-sand);">The Navigator</h2>
@@ -228,7 +215,6 @@
         </div>
     </div>
 
-    <!-- MORE TAB -->
     <div id="tab-more" class="tab-content">
         <div class="journal-container">
             <h2 style="color: var(--warm-sand); margin-top: 0;">More</h2>
@@ -286,7 +272,6 @@
         </div>
     </div>
 
-    <!-- TUTORIALS VIEW -->
     <div id="view-tutorials" class="tab-content" style="background-color: var(--bg-color); z-index: 20; position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
         <div class="top-nav">
             <h1>Tutorials</h1>
@@ -295,7 +280,6 @@
         <div class="journal-container"><div id="tutorialContent"></div></div>
     </div>
 
-    <!-- GUIDE VIEW -->
     <div id="view-guide" class="tab-content" style="background-color: var(--bg-color); z-index: 20; position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
         <div class="top-nav">
             <h1>The Guide</h1>
@@ -304,7 +288,6 @@
         <div class="journal-container"><div id="guideContent"></div></div>
     </div>
 
-    <!-- BOTTOM NAVIGATION -->
     <div class="bottom-nav">
         <button class="nav-item active" onclick="switchTab('talk', this)"><span class="nav-icon">💬</span> Talk</button>
         <button class="nav-item" onclick="switchTab('journal', this)"><span class="nav-icon">✍️</span> Journal</button>
@@ -315,13 +298,11 @@
     </div>
 
     <script>
-        // GLOBAL VARIABLES
         let masterDocContext = "";
         let isThinking = false;
         let currentUser = localStorage.getItem('peacemaker_active_user') || null;
         let chatHistory = [];
 
-        // --- DEVICE ID & FAMILY ACCOUNT LOGIC ---
         window.addEventListener('DOMContentLoaded', () => {
             if (currentUser && localStorage.getItem('peacemaker_verified_' + currentUser) === 'true') {
                 document.getElementById('activeAccountDiv').style.display = 'block';
@@ -379,12 +360,10 @@
             window.currentChatKey = chatKey;
             renderChat();
             
-            // Load Profile Name
             const savedName = localStorage.getItem('peacemaker_name_' + currentUser);
             if(savedName) document.getElementById('profileName').value = savedName;
         }
 
-        // --- TAB SWITCHING LOGIC ---
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 if(!tab.id.startsWith('view-')) tab.classList.remove('active');
@@ -398,7 +377,6 @@
             if (tabId === 'memory') loadMemory();
         }
 
-        // --- JOURNAL LOGIC ---
         function saveJournal() {
             const text = document.getElementById('journalInput').value.trim();
             if (!text) return alert("Write something first.");
@@ -432,7 +410,6 @@
             });
         }
 
-        // --- PASSWORDS ---
         function generatePassword() {
             const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
             let password = "";
@@ -440,7 +417,6 @@
             document.getElementById('passwordDisplay').innerText = password;
         }
 
-        // --- ALARMS ---
         function setAlarmPrompt() {
             const minutes = prompt("Set an alarm for how many minutes from now? (e.g., 5)");
             if (minutes && !isNaN(minutes)) {
@@ -450,7 +426,6 @@
             }
         }
 
-        // --- PROFILE ---
         function saveProfile() {
             const name = document.getElementById('profileName').value.trim();
             if (name && currentUser) {
@@ -459,7 +434,6 @@
             }
         }
 
-        // --- THEME ---
         function toggleTheme(mode) {
             if (mode === 'light') {
                 document.documentElement.style.setProperty('--bg-color', '#f4f1ea');
@@ -476,7 +450,6 @@
             }
         }
 
-        // --- SUB VIEWS (GUIDE & TUTORIALS) ---
         function closeSubView(viewId) { document.getElementById(viewId).classList.remove('active'); }
 
         function showTutorials() {
@@ -520,7 +493,6 @@
             });
         }
 
-        // --- SYNC MASTER DOCUMENT ---
         async function syncMasterDoc() {
             const status = document.getElementById('syncStatus');
             status.innerText = "Syncing from laptop...";
@@ -545,7 +517,6 @@
             }
         }
 
-        // Load MD on startup if it exists in local storage
         window.addEventListener('DOMContentLoaded', () => {
             const savedMD = localStorage.getItem('peacemaker_md');
             if (savedMD) {
@@ -555,7 +526,6 @@
             }
         });
 
-        // --- TALK LOGIC ---
         const API_URL = "http://127.0.0.1:11434/api/generate";
         const MODEL = "custom-gemma"; 
         const chatContainer = document.getElementById('chatContainer');
@@ -609,4 +579,17 @@
                 saveChat();
                 renderChat();
             } catch (error) {
-                document.getElementById
+                document.getElementById(thinkingId).remove();
+                chatHistory.push({ sender: 'The Peacemaker', text: "Error connecting to the local AI. Is Ollama running?", time: getTime() });
+                saveChat();
+                renderChat();
+            }
+            isThinking = false;
+            sendBtn.disabled = false;
+            userInput.focus();
+        }
+
+        userInput.addEventListener('keypress', function (e) { if (e.key === 'Enter') sendMessage(); });
+    </script>
+</body>
+</html>
