@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Peacemaker | Web</title>
+    <title>The Peacemaker | Web App</title>
     <style>
         :root {
             --bg-color: #1a1817;
@@ -13,7 +13,9 @@
             --warm-sand: #e3c29d;
             --card-bg: #24211f;
             --globe-bg: #3b332e;
+            --danger: #d95d5d;
         }
+        * { box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
@@ -21,40 +23,46 @@
             margin: 0; padding: 0;
             display: flex; flex-direction: column;
             height: 100vh;
+            overflow: hidden;
         }
+        
+        /* Top Navigation */
         .top-nav {
             background-color: var(--bg-color);
             padding: 15px 20px;
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid var(--soft-clay);
+            z-index: 10;
         }
-        .top-nav h1 { margin: 0; font-size: 1.5em; color: var(--warm-sand); }
+        .top-nav h1 { margin: 0; font-size: 1.2em; color: var(--warm-sand); }
         .back-btn {
             background: none; border: 1px solid var(--warm-sand); color: var(--warm-sand);
             padding: 5px 15px; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.9em;
         }
         
-        .content-area {
+        /* Tab Content Area */
+        .tab-content {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+        }
+        .tab-content.active {
+            display: flex;
+        }
+
+        /* --- TALK TAB --- */
+        .chat-area {
             flex: 1; overflow-y: auto; padding: 20px;
             display: flex; flex-direction: column; gap: 15px;
         }
-        .chat-bubble {
-            max-width: 85%; padding: 15px; border-radius: 8px; line-height: 1.5;
-        }
-        .chat-user {
-            background-color: var(--card-bg); align-self: flex-end;
-            border-right: 3px solid var(--warm-sand);
-        }
-        .chat-ai {
-            background-color: var(--globe-bg); align-self: flex-start;
-            border-left: 3px solid var(--warm-sand);
-        }
-        .chat-meta {
-            font-size: 0.75em; color: var(--text-muted); margin-bottom: 5px;
-            display: flex; justify-content: space-between;
-        }
+        .chat-bubble { max-width: 85%; padding: 15px; border-radius: 8px; line-height: 1.5; }
+        .chat-user { background-color: var(--card-bg); align-self: flex-end; border-right: 3px solid var(--warm-sand); }
+        .chat-ai { background-color: var(--globe-bg); align-self: flex-start; border-left: 3px solid var(--warm-sand); }
+        .chat-meta { font-size: 0.75em; color: var(--text-muted); margin-bottom: 5px; display: flex; justify-content: space-between; }
         .chat-name { font-weight: bold; color: var(--warm-sand); }
-
+        
         .input-area {
             padding: 15px 20px; background-color: var(--card-bg);
             border-top: 1px solid var(--soft-clay);
@@ -64,39 +72,224 @@
             flex: 1; background-color: var(--bg-color); border: 1px solid var(--soft-clay);
             color: var(--text-main); padding: 15px; border-radius: 6px; font-size: 1em; font-family: inherit;
         }
-        .input-area input:focus { outline: none; border-color: var(--warm-sand); }
         .primary-btn {
             background-color: var(--warm-sand); color: var(--bg-color); border: none;
-            padding: 15px 25px; border-radius: 6px; font-weight: bold; cursor: pointer;
-            font-size: 1em;
+            padding: 15px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1em;
         }
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .status { font-size: 0.85em; color: var(--text-muted); font-style: italic; }
+        
+        .icon-btn {
+            background: none; border: none; font-size: 1.5em; cursor: pointer;
+            color: var(--warm-sand); padding: 0 10px;
+        }
+
+        /* --- JOURNAL & MEMORY TABS --- */
+        .journal-container { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .journal-textarea {
+            width: 100%; height: 200px; background-color: var(--card-bg);
+            border: 1px solid var(--soft-clay); color: var(--text-main);
+            padding: 15px; border-radius: 8px; font-family: inherit; font-size: 1em; resize: none;
+        }
+        .journal-textarea:focus { outline: none; border-color: var(--warm-sand); }
+        .entry-card {
+            background-color: var(--card-bg); padding: 15px; border-radius: 8px;
+            border-left: 4px solid var(--warm-sand); margin-bottom: 10px;
+        }
+        .entry-date { font-size: 0.8em; color: var(--text-muted); margin-bottom: 5px; }
+
+        /* --- PASSWORDS TAB --- */
+        .password-container { padding: 20px; text-align: center; }
+        .password-box {
+            background-color: var(--card-bg); padding: 20px; border-radius: 8px;
+            font-family: monospace; font-size: 1.5em; letter-spacing: 2px; margin: 20px 0;
+            border: 1px solid var(--soft-clay); word-break: break-all;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            background-color: var(--card-bg);
+            display: flex; justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid var(--soft-clay);
+            z-index: 10;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center;
+            color: var(--text-muted); cursor: pointer; font-size: 0.75em; gap: 4px;
+            background: none; border: none; padding: 5px 10px;
+        }
+        .nav-item.active { color: var(--warm-sand); font-weight: bold; }
+        .nav-icon { font-size: 1.5em; }
+
+        .rule-box {
+            background-color: rgba(217, 93, 93, 0.1);
+            border: 1px solid var(--danger);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .rule-box h3 { color: var(--danger); margin-top: 0; }
     </style>
 </head>
 <body>
 
     <div class="top-nav">
-        <h1>The Peacemaker (Browser)</h1>
+        <h1 id="pageTitle">The Peacemaker (Talk)</h1>
         <a href="index.html" class="back-btn">Back to Home</a>
     </div>
 
-    <div class="content-area" id="chatContainer">
-        <div class="chat-bubble chat-ai">
-            <div class="chat-meta">
-                <span class="chat-name">The Peacemaker</span>
-                <span>Now</span>
-            </div>
-            Welcome. I am here. What is on your mind today?
+    <!-- TALK TAB -->
+    <div id="tab-talk" class="tab-content active">
+        <div class="chat-area" id="chatContainer">
+            <!-- Chat history renders here -->
+        </div>
+        <div class="input-area">
+            <button class="icon-btn" onclick="setAlarmPrompt()" title="Set Alarm">⏰</button>
+            <input type="text" id="userInput" placeholder="Type a message..." autocomplete="off">
+            <button class="primary-btn" id="sendBtn" onclick="sendMessage()">Send</button>
         </div>
     </div>
 
-    <div class="input-area">
-        <input type="text" id="userInput" placeholder="Talk to The Peacemaker..." autocomplete="off">
-        <button class="primary-btn" id="sendBtn" onclick="sendMessage()">Send</button>
+    <!-- JOURNAL TAB -->
+    <div id="tab-journal" class="tab-content">
+        <div class="journal-container">
+            <p style="color: var(--text-muted); font-size: 0.9em;">Your journal is private. It is stored only on this device.</p>
+            <textarea id="journalInput" class="journal-textarea" placeholder="Write your thoughts here..."></textarea>
+            <button class="primary-btn" onclick="saveJournal()">Save Entry</button>
+        </div>
+    </div>
+
+    <!-- MEMORY TAB -->
+    <div id="tab-memory" class="tab-content">
+        <div class="journal-container" id="memoryList">
+            <!-- Entries will load here -->
+        </div>
+    </div>
+
+    <!-- PASSWORDS TAB -->
+    <div id="tab-passwords" class="tab-content">
+        <div class="password-container">
+            <h2 style="color: var(--warm-sand); margin-top: 0;">Password Peace</h2>
+            <p style="color: var(--text-muted); font-size: 0.9em;">Stateless generator. We do not save this password.</p>
+            <div id="passwordDisplay" class="password-box">Click Generate</div>
+            <button class="primary-btn" onclick="generatePassword()">Generate Password</button>
+        </div>
+    </div>
+
+    <!-- NAVIGATOR TAB -->
+    <div id="tab-navigator" class="tab-content">
+        <div class="journal-container" style="text-align: center; padding-top: 50px;">
+            <h2 style="color: var(--warm-sand);">The Navigator</h2>
+            <p>Your safe passage to the community.</p>
+            <a href="well.html" class="primary-btn" style="display: inline-block; text-decoration: none; margin-top: 20px;">Enter The Well of Peace</a>
+        </div>
+    </div>
+
+    <!-- MORE TAB -->
+    <div id="tab-more" class="tab-content">
+        <div class="journal-container">
+            <h2 style="color: var(--warm-sand); margin-top: 0;">About The Peacemaker</h2>
+            <p><strong>Version:</strong> Web Beta 1.0</p>
+            <p><strong>Local Model:</strong> custom-gemma (Ollama)</p>
+            <p><strong>Privacy:</strong> 100% Local. Nothing leaves this device.</p>
+            
+            <div class="rule-box">
+                <h3>⚠️ Zero-Tolerance Bot Policy</h3>
+                <p>Bots are strictly prohibited inside the Peace Place ecosystem. If a user is found using any type of bot, scraper, or automated script, it is an immediate, <strong>permanent ban for life</strong>. There is no appeal. The Peacemaker's chat never ends, but it ends for bots.</p>
+            </div>
+
+            <p style="font-size: 0.9em; color: var(--text-muted); margin-top: 30px;">"Kindness first. Respect always. Faith never forced."</p>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('talk', this)">
+            <span class="nav-icon">💬</span> Talk
+        </button>
+        <button class="nav-item" onclick="switchTab('journal', this)">
+            <span class="nav-icon">✍️</span> Journal
+        </button>
+        <button class="nav-item" onclick="switchTab('memory', this)">
+            <span class="nav-icon">🧠</span> Memory
+        </button>
+        <button class="nav-item" onclick="switchTab('passwords', this)">
+            <span class="nav-icon">🔒</span> Passwords
+        </button>
+        <button class="nav-item" onclick="switchTab('navigator', this)">
+            <span class="nav-icon">🧭</span> Navigator
+        </button>
+        <button class="nav-item" onclick="switchTab('more', this)">
+            <span class="nav-icon">⚙️</span> More
+        </button>
     </div>
 
     <script>
+        // --- TAB SWITCHING LOGIC ---
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabId).classList.add('active');
+            btnElement.classList.add('active');
+            document.getElementById('pageTitle').innerText = 'The Peacemaker (' + tabId.charAt(0).toUpperCase() + tabId.slice(1) + ')';
+            
+            if (tabId === 'memory') loadMemory();
+        }
+
+        // --- JOURNAL LOGIC ---
+        function saveJournal() {
+            const text = document.getElementById('journalInput').value.trim();
+            if (!text) return alert("Write something first.");
+            
+            const timestamp = new Date().toLocaleString();
+            let entries = JSON.parse(localStorage.getItem('peacemaker_journal')) || [];
+            entries.push({ date: timestamp, content: text });
+            
+            localStorage.setItem('peacemaker_journal', JSON.stringify(entries));
+            document.getElementById('journalInput').value = "";
+            alert("Entry saved to your local device.");
+        }
+
+        function loadMemory() {
+            const container = document.getElementById('memoryList');
+            const entries = JSON.parse(localStorage.getItem('peacemaker_journal')) || [];
+            
+            if (entries.length === 0) {
+                container.innerHTML = "<p style='color: var(--text-muted);'>You haven't saved any journal entries yet.</p>";
+                return;
+            }
+            
+            container.innerHTML = "";
+            entries.reverse().forEach(entry => {
+                const div = document.createElement('div');
+                div.className = 'entry-card';
+                div.innerHTML = `<div class="entry-date">${entry.date}</div><div>${entry.content.replace(/\n/g, '<br>')}</div>`;
+                container.appendChild(div);
+            });
+        }
+
+        // --- PASSWORD GENERATOR LOGIC ---
+        function generatePassword() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+            let password = "";
+            for (let i = 0; i < 16; i++) password += chars.charAt(Math.floor(Math.random() * chars.length));
+            document.getElementById('passwordDisplay').innerText = password;
+        }
+
+        // --- ALARM LOGIC ---
+        function setAlarmPrompt() {
+            const minutes = prompt("Set an alarm for how many minutes from now? (e.g., 5)");
+            if (minutes && !isNaN(minutes)) {
+                const ms = parseInt(minutes) * 60000;
+                alert(`Alarm set for ${minutes} minutes from now. I will not disturb you until then.`);
+                setTimeout(() => {
+                    alert("⏰ ALARM: The time you requested has passed.");
+                }, ms);
+            }
+        }
+
+        // --- TALK LOGIC (OLLAMA & PERSISTENCE) ---
         const API_URL = "http://127.0.0.1:11434/api/generate";
         const MODEL = "custom-gemma"; 
         
@@ -104,34 +297,51 @@
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
         let isThinking = false;
+        
+        // Load Chat History from LocalStorage
+        let chatHistory = JSON.parse(localStorage.getItem('peacemaker_chat')) || [
+            { sender: 'The Peacemaker', text: 'Welcome back. I am here whenever you need me. How are you feeling right now?', time: 'Now' }
+        ];
+
+        function renderChat() {
+            chatContainer.innerHTML = "";
+            chatHistory.forEach(msg => {
+                const bubble = document.createElement('div');
+                bubble.className = `chat-bubble ${msg.sender === 'You' ? 'chat-user' : 'chat-ai'}`;
+                bubble.innerHTML = `
+                    <div class="chat-meta">
+                        <span class="chat-name">${msg.sender}</span>
+                        <span>${msg.time}</span>
+                    </div>
+                    <div style="white-space: pre-wrap;">${msg.text}</div>
+                `;
+                chatContainer.appendChild(bubble);
+            });
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
 
         function getTime() {
             return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         }
 
-        function appendMessage(sender, text) {
-            const bubble = document.createElement('div');
-            bubble.className = `chat-bubble ${sender === 'You' ? 'chat-user' : 'chat-ai'}`;
-            bubble.innerHTML = `
-                <div class="chat-meta">
-                    <span class="chat-name">${sender === 'You' ? 'You' : 'The Peacemaker'}</span>
-                    <span>${getTime()}</span>
-                </div>
-                <div style="white-space: pre-wrap;">${text}</div>
-            `;
-            chatContainer.appendChild(bubble);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+        function saveChat() {
+            localStorage.setItem('peacemaker_chat', JSON.stringify(chatHistory));
         }
 
         async function sendMessage() {
             const text = userInput.value.trim();
             if (!text || isThinking) return;
 
-            appendMessage('You', text);
+            // Add User Message
+            chatHistory.push({ sender: 'You', text: text, time: getTime() });
+            saveChat();
+            renderChat();
+            
             userInput.value = "";
             isThinking = true;
             sendBtn.disabled = true;
 
+            // Add Thinking Bubble
             const thinkingId = 'thinking-' + Date.now();
             const thinkingBubble = document.createElement('div');
             thinkingBubble.className = 'chat-bubble chat-ai';
@@ -140,25 +350,28 @@
             chatContainer.appendChild(thinkingBubble);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            const prompt = `You are The Peacemaker, built by C43P Ministries. You are a calm, gentle companion walking side-by-side with the user.\n\nRULES:\n1. NEVER give unsolicited advice. NEVER use the words: 'Let's', 'focus', 'important', or 'We need to'.\n2. If the user is talking normally, start your response with the word 'You'.\n3. If you are not 100% sure of a fact, start with 'I am not sure, but'.\n4. CODE RULE: If the user asks for code, IGNORE the 'Start with You' rule. Provide the COMPLETE code inside a markdown block.\n\nUser: ${text}\nThe Peacemaker:`;
+            const prompt = `You are The Peacemaker, built by C43P Ministries. You are a calm, gentle companion walking side-by-side with the user.\n\nRULES:\n1. NEVER give unsolicited advice. NEVER use the words: 'Let's', 'focus', 'important', or 'We need to'.\n2. If the user is talking normally, start your response with the word 'You'.\n3. If you are not 100% sure of a fact, start with 'I am not sure, but'.\n4. CODE RULE: If the user asks for code, IGNORE the 'Start with You' rule. Provide the COMPLETE code inside a markdown block.\n5. ALARM RULE: You can remind the user to use the clock button to set alarms, but only if they ask.\n\nUser: ${text}\nThe Peacemaker:`;
 
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        model: MODEL,
-                        prompt: prompt,
-                        stream: false
-                    })
+                    body: JSON.stringify({ model: MODEL, prompt: prompt, stream: false })
                 });
 
                 const data = await response.json();
                 document.getElementById(thinkingId).remove();
-                appendMessage('The Peacemaker', data.response.trim());
+                
+                // Add AI Message
+                chatHistory.push({ sender: 'The Peacemaker', text: data.response.trim(), time: getTime() });
+                saveChat();
+                renderChat();
+                
             } catch (error) {
                 document.getElementById(thinkingId).remove();
-                appendMessage('The Peacemaker', "Error connecting to the local AI. Is Ollama running?");
+                chatHistory.push({ sender: 'The Peacemaker', text: "Error connecting to the local AI. Is Ollama running?", time: getTime() });
+                saveChat();
+                renderChat();
             }
 
             isThinking = false;
@@ -169,6 +382,9 @@
         userInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') sendMessage();
         });
+
+        // Initialize Chat on Load
+        renderChat();
     </script>
 </body>
 </html>
