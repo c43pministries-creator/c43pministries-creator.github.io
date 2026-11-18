@@ -108,6 +108,7 @@
         .more-card h3 { margin: 0 0 5px 0; color: var(--warm-sand); font-size: 1.1em; }
         .more-card p { margin: 0 0 10px 0; font-size: 0.85em; color: var(--text-muted); }
         .more-card button { width: 100%; }
+        .more-card input[type="text"] { width: 100%; padding: 10px; margin-bottom: 10px; background: var(--bg-color); border: 1px solid var(--soft-clay); color: white; border-radius: 4px; }
 
         /* --- GUIDE & TUTORIALS --- */
         .guide-section { background-color: var(--card-bg); padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--warm-sand); }
@@ -146,6 +147,38 @@
     </style>
 </head>
 <body>
+
+    <!-- ID VERIFICATION OVERLAY -->
+    <div id="idOverlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--bg-color); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center;">
+        <h2 style="color: var(--warm-sand);">Device Verification</h2>
+        <p style="color: var(--text-muted); max-width: 400px; margin-bottom: 20px;">The Peacemaker is limited to one account per person. To unlock this device, please verify your identity. It is encrypted and stored locally. It is never sent to a server.</p>
+        
+        <input type="file" id="idUpload" accept="image/*" style="display: none;" onchange="verifyID(event)">
+        
+        <div id="activeAccountDiv" style="display: none; margin-bottom: 20px;">
+            <p style="color: var(--success); font-weight: bold;">Welcome back, <span id="activeAccountName"></span></p>
+            <button class="primary-btn" onclick="unlockApp()" style="margin-bottom: 10px;">Enter My Peacemaker</button>
+            <button class="primary-btn" style="background-color: transparent; border: 1px solid var(--warm-sand); color: var(--warm-sand);" onclick="showNewAccount()">Switch User / Add Family Member</button>
+        </div>
+
+        <div id="newAccountDiv">
+            <input type="text" id="newUserName" placeholder="Enter your first name" style="width: 100%; max-width: 300px; padding: 12px; margin-bottom: 15px; background: var(--bg-color); border: 1px solid var(--soft-clay); color: white; border-radius: 4px;">
+            
+            <div style="margin-bottom: 15px; text-align: left; max-width: 300px; color: var(--text-main);">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">I am verifying as:</label>
+                <label style="display: block; margin-bottom: 5px; cursor: pointer;">
+                    <input type="radio" name="idType" value="adult" checked> Adult (State ID / Driver's License)
+                </label>
+                <label style="display: block; cursor: pointer;">
+                    <input type="radio" name="idType" value="child"> Student (School ID)
+                </label>
+            </div>
+
+            <button class="primary-btn" onclick="document.getElementById('idUpload').click()">Upload ID to Create Account</button>
+        </div>
+
+        <p id="idStatus" style="color: var(--success); margin-top: 20px;"></p>
+    </div>
 
     <div class="top-nav">
         <h1 id="pageTitle">The Peacemaker (Talk)</h1>
@@ -200,42 +233,36 @@
         <div class="journal-container">
             <h2 style="color: var(--warm-sand); margin-top: 0;">More</h2>
 
-            <!-- TUTORIALS -->
             <div class="more-card">
                 <h3>Tutorials</h3>
                 <p>Step-by-step walkthroughs for the app.</p>
                 <button class="primary-btn" onclick="showTutorials()">Open Tutorials</button>
             </div>
 
-            <!-- THE GUIDE -->
             <div class="more-card">
                 <h3>The Guide</h3>
                 <p>Learn how everything works.</p>
                 <button class="primary-btn" onclick="showGuide()">Open Guide</button>
             </div>
 
-            <!-- CALENDAR & ALARMS -->
             <div class="more-card">
                 <h3>Calendar & Alarms</h3>
                 <p>Manage your time, alarms, and availability.</p>
                 <button class="primary-btn" onclick="setAlarmPrompt()">Set an Alarm</button>
             </div>
 
-            <!-- WELL OF PEACE -->
             <div class="more-card">
                 <h3>The Well of Peace</h3>
                 <button class="primary-btn" onclick="window.location.href='well.html'">Enter The Well of Peace</button>
             </div>
 
-            <!-- PROFILE -->
             <div class="more-card">
                 <h3>Your Profile</h3>
                 <p>Set your display name.</p>
-                <input type="text" id="profileName" placeholder="Enter your name" style="width: 100%; padding: 10px; margin-bottom: 10px; background: var(--bg-color); border: 1px solid var(--soft-clay); color: white; border-radius: 4px;">
+                <input type="text" id="profileName" placeholder="Enter your name">
                 <button class="primary-btn" onclick="saveProfile()">Save Profile</button>
             </div>
 
-            <!-- SYNC MD -->
             <div class="more-card">
                 <h3>Sync Master Document</h3>
                 <p>Update The Peacemaker with the latest rules.</p>
@@ -243,7 +270,6 @@
                 <p id="syncStatus" style="font-size: 0.9em; color: var(--warm-sand); margin-top: 10px;"></p>
             </div>
 
-            <!-- THEME -->
             <div class="more-card">
                 <h3>Theme</h3>
                 <p>Choose your visual experience.</p>
@@ -251,7 +277,6 @@
                 <button class="primary-btn" onclick="toggleTheme('light')" style="margin-top: 5px; background-color: #ddd; color: #000;">Light Mode</button>
             </div>
 
-            <!-- BOT POLICY -->
             <div class="rule-box">
                 <h3>⚠️ Zero-Tolerance Bot Policy</h3>
                 <p>Bots are strictly prohibited inside the Peace Place ecosystem. If a user is found using any type of bot, scraper, or automated script, it is an immediate, <strong>permanent ban for life</strong>. There is no appeal. The Peacemaker's chat never ends, but it ends for bots.</p>
@@ -261,28 +286,22 @@
         </div>
     </div>
 
-    <!-- TUTORIALS VIEW (Hidden by default) -->
+    <!-- TUTORIALS VIEW -->
     <div id="view-tutorials" class="tab-content" style="background-color: var(--bg-color); z-index: 20; position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
         <div class="top-nav">
             <h1>Tutorials</h1>
             <button class="back-btn" onclick="closeSubView('view-tutorials')">Back</button>
         </div>
-        <div class="journal-container">
-            <!-- Tutorials injected here by JS -->
-            <div id="tutorialContent"></div>
-        </div>
+        <div class="journal-container"><div id="tutorialContent"></div></div>
     </div>
 
-    <!-- GUIDE VIEW (Hidden by default) -->
+    <!-- GUIDE VIEW -->
     <div id="view-guide" class="tab-content" style="background-color: var(--bg-color); z-index: 20; position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
         <div class="top-nav">
             <h1>The Guide</h1>
             <button class="back-btn" onclick="closeSubView('view-guide')">Back</button>
         </div>
-        <div class="journal-container">
-            <!-- Guide injected here by JS -->
-            <div id="guideContent"></div>
-        </div>
+        <div class="journal-container"><div id="guideContent"></div></div>
     </div>
 
     <!-- BOTTOM NAVIGATION -->
@@ -299,6 +318,71 @@
         // GLOBAL VARIABLES
         let masterDocContext = "";
         let isThinking = false;
+        let currentUser = localStorage.getItem('peacemaker_active_user') || null;
+        let chatHistory = [];
+
+        // --- DEVICE ID & FAMILY ACCOUNT LOGIC ---
+        window.addEventListener('DOMContentLoaded', () => {
+            if (currentUser && localStorage.getItem('peacemaker_verified_' + currentUser) === 'true') {
+                document.getElementById('activeAccountDiv').style.display = 'block';
+                document.getElementById('newAccountDiv').style.display = 'none';
+                document.getElementById('activeAccountName').innerText = currentUser;
+                document.getElementById('idOverlay').style.display = 'flex';
+            } else {
+                document.getElementById('activeAccountDiv').style.display = 'none';
+                document.getElementById('newAccountDiv').style.display = 'block';
+                document.getElementById('idOverlay').style.display = 'flex';
+            }
+        });
+
+        function showNewAccount() {
+            document.getElementById('activeAccountDiv').style.display = 'none';
+            document.getElementById('newAccountDiv').style.display = 'block';
+        }
+
+        function verifyID(event) {
+            const file = event.target.files[0];
+            const nameInput = document.getElementById('newUserName').value.trim();
+            const idType = document.querySelector('input[name="idType"]:checked').value;
+            
+            if (!file) return;
+            if (!nameInput) return alert("Please enter your name first.");
+
+            const status = document.getElementById('idStatus');
+            status.innerText = `Verifying ${idType} ID locally...`;
+            status.style.color = "var(--warm-sand)";
+
+            setTimeout(() => {
+                localStorage.setItem('peacemaker_verified_' + nameInput, 'true');
+                localStorage.setItem('peacemaker_active_user', nameInput);
+                localStorage.setItem('peacemaker_id_type_' + nameInput, idType);
+                
+                currentUser = nameInput;
+                
+                status.innerText = `Device Verified. Welcome to The Peace Place, ${nameInput}.`;
+                status.style.color = "var(--success)";
+                
+                setTimeout(() => { unlockApp(); }, 1500);
+            }, 2000);
+        }
+
+        function unlockApp() {
+            document.getElementById('idOverlay').style.display = 'none';
+            loadUserData();
+        }
+
+        function loadUserData() {
+            let chatKey = currentUser ? 'peacemaker_chat_' + currentUser : 'peacemaker_chat';
+            chatHistory = JSON.parse(localStorage.getItem(chatKey)) || [
+                { sender: 'The Peacemaker', text: 'Welcome back, ' + (currentUser || 'friend') + '. I am here whenever you need me. How are you feeling right now?', time: 'Now' }
+            ];
+            window.currentChatKey = chatKey;
+            renderChat();
+            
+            // Load Profile Name
+            const savedName = localStorage.getItem('peacemaker_name_' + currentUser);
+            if(savedName) document.getElementById('profileName').value = savedName;
+        }
 
         // --- TAB SWITCHING LOGIC ---
         function switchTab(tabId, btnElement) {
@@ -320,17 +404,19 @@
             if (!text) return alert("Write something first.");
             
             const timestamp = new Date().toLocaleString();
-            let entries = JSON.parse(localStorage.getItem('peacemaker_journal')) || [];
+            let journalKey = 'peacemaker_journal_' + currentUser;
+            let entries = JSON.parse(localStorage.getItem(journalKey)) || [];
             entries.push({ date: timestamp, content: text });
             
-            localStorage.setItem('peacemaker_journal', JSON.stringify(entries));
+            localStorage.setItem(journalKey, JSON.stringify(entries));
             document.getElementById('journalInput').value = "";
             alert("Entry saved to your local device.");
         }
 
         function loadMemory() {
             const container = document.getElementById('memoryList');
-            const entries = JSON.parse(localStorage.getItem('peacemaker_journal')) || [];
+            let journalKey = 'peacemaker_journal_' + currentUser;
+            const entries = JSON.parse(localStorage.getItem(journalKey)) || [];
             
             if (entries.length === 0) {
                 container.innerHTML = "<p style='color: var(--text-muted);'>You haven't saved any journal entries yet.</p>";
@@ -360,24 +446,18 @@
             if (minutes && !isNaN(minutes)) {
                 const ms = parseInt(minutes) * 60000;
                 alert(`Alarm set for ${minutes} minutes from now.`);
-                setTimeout(() => {
-                    alert("⏰ ALARM: The time you requested has passed.");
-                }, ms);
+                setTimeout(() => { alert("⏰ ALARM: The time you requested has passed."); }, ms);
             }
         }
 
         // --- PROFILE ---
         function saveProfile() {
             const name = document.getElementById('profileName').value.trim();
-            if (name) {
-                localStorage.setItem('peacemaker_name', name);
+            if (name && currentUser) {
+                localStorage.setItem('peacemaker_name_' + currentUser, name);
                 alert("Name saved as: " + name);
             }
         }
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedName = localStorage.getItem('peacemaker_name');
-            if(savedName) document.getElementById('profileName').value = savedName;
-        });
 
         // --- THEME ---
         function toggleTheme(mode) {
@@ -397,14 +477,12 @@
         }
 
         // --- SUB VIEWS (GUIDE & TUTORIALS) ---
-        function closeSubView(viewId) {
-            document.getElementById(viewId).classList.remove('active');
-        }
+        function closeSubView(viewId) { document.getElementById(viewId).classList.remove('active'); }
 
         function showTutorials() {
             document.getElementById('view-tutorials').classList.add('active');
             const container = document.getElementById('tutorialContent');
-            if (container.innerHTML !== "") return; // Only load once
+            if (container.innerHTML !== "") return;
 
             const tutorials = [
                 { title: "Talking with The Peacemaker", intro: "The Talk tab is where you speak with your companion. Everything is saved locally and encrypted.", steps: [ { title: "1. Send a message", body: "Type what you are feeling or thinking. The Peacemaker will read it and reply.", action: "Type in the box and tap the Send arrow." }, { title: "2. It remembers", body: "The Peacemaker reads the last few messages to keep the context.", action: "Try telling it your favorite color, then ask it what your favorite color is." } ] },
@@ -427,9 +505,9 @@
             if (container.innerHTML !== "") return;
 
             const guide = [
-                { title: "About The Peacemaker", summary: "What this app is, and what it is not.", subsections: [ { title: "What this is", body: "The Peacemaker is a companion, not a commander. It walks beside you. It does not control you." }, { title: "What this is not", body: "It is not a doctor. It does not diagnose. It does not treat. If you are in danger, call for help directly." } ] },
-                { title: "Talk", summary: "The conversation with your companion.", subsections: [ { title: "The local model", body: "The Peacemaker runs on an on-device language model. It does not connect to the internet." }, { title: "Deleting messages", body: "Every message has a small trash can icon. Tapping it deletes that specific message permanently." } ] },
-                { title: "Privacy", summary: "What The Peacemaker knows, and what it never knows.", subsections: [ { title: "Everything stays on your device", body: "Your journal, your voice, your reflections, and your conversations all live on the device you are holding. None of it is transmitted." } ] }
+                { title: "About The Peacemaker", summary: "What this app is, and what it is not.", subsections: [ { title: "What this is", body: "The Peacemaker is a companion, not a commander. It walks beside you." }, { title: "What this is not", body: "It is not a doctor. If you are in danger, call for help directly." } ] },
+                { title: "Talk", summary: "The conversation with your companion.", subsections: [ { title: "The local model", body: "The Peacemaker runs on an on-device language model." }, { title: "Deleting messages", body: "Tap the trash can icon to delete a specific message." } ] },
+                { title: "Privacy", summary: "What The Peacemaker knows, and what it never knows.", subsections: [ { title: "Everything stays on your device", body: "Your journal, your voice, and your conversations all live on the device you are holding. None of it is transmitted." } ] }
             ];
 
             guide.forEach(sec => {
@@ -467,6 +545,7 @@
             }
         }
 
+        // Load MD on startup if it exists in local storage
         window.addEventListener('DOMContentLoaded', () => {
             const savedMD = localStorage.getItem('peacemaker_md');
             if (savedMD) {
@@ -482,10 +561,6 @@
         const chatContainer = document.getElementById('chatContainer');
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
-        
-        let chatHistory = JSON.parse(localStorage.getItem('peacemaker_chat')) || [
-            { sender: 'The Peacemaker', text: 'Welcome back. I am here whenever you need me. How are you feeling right now?', time: 'Now' }
-        ];
 
         function renderChat() {
             chatContainer.innerHTML = "";
@@ -499,7 +574,7 @@
         }
 
         function getTime() { return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }); }
-        function saveChat() { localStorage.setItem('peacemaker_chat', JSON.stringify(chatHistory)); }
+        function saveChat() { localStorage.setItem(window.currentChatKey, JSON.stringify(chatHistory)); }
 
         async function sendMessage() {
             const text = userInput.value.trim();
@@ -534,18 +609,4 @@
                 saveChat();
                 renderChat();
             } catch (error) {
-                document.getElementById(thinkingId).remove();
-                chatHistory.push({ sender: 'The Peacemaker', text: "Error connecting to the local AI. Is Ollama running?", time: getTime() });
-                saveChat();
-                renderChat();
-            }
-            isThinking = false;
-            sendBtn.disabled = false;
-            userInput.focus();
-        }
-
-        userInput.addEventListener('keypress', function (e) { if (e.key === 'Enter') sendMessage(); });
-        renderChat();
-    </script>
-</body>
-</html>
+                document.getElementById
