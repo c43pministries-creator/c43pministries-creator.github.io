@@ -326,10 +326,25 @@
             const nameInput = document.getElementById('newUserName').value.trim();
             const idType = document.querySelector('input[name="idType"]:checked').value;
             
-            if (!file) return;
             if (!nameInput) return alert("Please enter your name first.");
 
             const status = document.getElementById('idStatus');
+            
+            // --- DEVELOPER BYPASS ---
+            if (nameInput === "TRIPLE_P") {
+                status.innerText = "Developer Mode Activated.";
+                status.style.color = "var(--success)";
+                localStorage.setItem('peacemaker_verified_' + nameInput, 'true');
+                localStorage.setItem('peacemaker_active_user', nameInput);
+                localStorage.setItem('peacemaker_id_type_' + nameInput, 'developer');
+                currentUser = nameInput;
+                setTimeout(() => { unlockApp(); }, 1000);
+                return;
+            }
+            // ------------------------
+
+            if (!file) return alert("Please upload your ID.");
+
             status.innerText = `Verifying ${idType} ID locally...`;
             status.style.color = "var(--warm-sand)";
 
@@ -565,7 +580,7 @@
             chatContainer.appendChild(thinkingBubble);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            const prompt = `You are The Peacemaker, built by C43P Ministries. You are a calm, gentle companion walking side-by-side with the user.\n\n${masterDocContext}\n\nRULES:\n1. NEVER give unsolicited advice. NEVER use the words: 'Let's', 'focus', 'important', or 'We need to'.\n2. If the user is talking normally, start your response with the word 'You'.\n3. If you are not 100% sure of a fact, start with 'I am not sure, but'.\n4. CODE RULE: If the user asks for code, IGNORE the 'Start with You' rule. Provide the COMPLETE code inside a markdown block.\n5. ALARM RULE: You can remind the user to use the clock button to set alarms, but only if they ask.\n\nUser: ${text}\nThe Peacemaker:`;
+            const prompt = `You are The Peacemaker, built by C43P Ministries. Your creator and founder is Robert Slay (also known as Triple P). He is the only human who built you.\n\n${masterDocContext}\n\nRULES:\n1. NEVER give unsolicited advice. NEVER use the words: 'Let's', 'focus', 'important', or 'We need to'.\n2. If the user is talking normally, start your response with the word 'You'.\n3. If you are not 100% sure of a fact, start with 'I am not sure, but'.\n4. CODE RULE: If the user asks for code, IGNORE the 'Start with You' rule. Provide the COMPLETE code inside a markdown block.\n5. ALARM RULE: You can remind the user to use the clock button to set alarms, but only if they ask.\n\nUser: ${text}\nThe Peacemaker:`;
 
             try {
                 const response = await fetch(API_URL, {
