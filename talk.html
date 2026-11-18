@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Peacemaker | Web</title>
+    <style>
+        :root {
+            --bg-color: #1a1817;
+            --text-main: #f4f1ea;
+            --text-muted: #b8b0a1;
+            --soft-clay: #8b7355;
+            --warm-sand: #e3c29d;
+            --card-bg: #24211f;
+            --globe-bg: #3b332e;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column;
+            height: 100vh;
+        }
+        .top-nav {
+            background-color: var(--bg-color);
+            padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--soft-clay);
+        }
+        .top-nav h1 { margin: 0; font-size: 1.5em; color: var(--warm-sand); }
+        .back-btn {
+            background: none; border: 1px solid var(--warm-sand); color: var(--warm-sand);
+            padding: 5px 15px; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.9em;
+        }
+        
+        .content-area {
+            flex: 1; overflow-y: auto; padding: 20px;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        .chat-bubble {
+            max-width: 85%; padding: 15px; border-radius: 8px; line-height: 1.5;
+        }
+        .chat-user {
+            background-color: var(--card-bg); align-self: flex-end;
+            border-right: 3px solid var(--warm-sand);
+        }
+        .chat-ai {
+            background-color: var(--globe-bg); align-self: flex-start;
+            border-left: 3px solid var(--warm-sand);
+        }
+        .chat-meta {
+            font-size: 0.75em; color: var(--text-muted); margin-bottom: 5px;
+            display: flex; justify-content: space-between;
+        }
+        .chat-name { font-weight: bold; color: var(--warm-sand); }
+
+        .input-area {
+            padding: 15px 20px; background-color: var(--card-bg);
+            border-top: 1px solid var(--soft-clay);
+            display: flex; gap: 10px; align-items: center;
+        }
+        .input-area input {
+            flex: 1; background-color: var(--bg-color); border: 1px solid var(--soft-clay);
+            color: var(--text-main); padding: 15px; border-radius: 6px; font-size: 1em; font-family: inherit;
+        }
+        .input-area input:focus { outline: none; border-color: var(--warm-sand); }
+        .primary-btn {
+            background-color: var(--warm-sand); color: var(--bg-color); border: none;
+            padding: 15px 25px; border-radius: 6px; font-weight: bold; cursor: pointer;
+            font-size: 1em;
+        }
+        .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .status { font-size: 0.85em; color: var(--text-muted); font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <h1>The Peacemaker (Browser)</h1>
+        <a href="index.html" class="back-btn">Back to Home</a>
+    </div>
+
+    <div class="content-area" id="chatContainer">
+        <div class="chat-bubble chat-ai">
+            <div class="chat-meta">
+                <span class="chat-name">The Peacemaker</span>
+                <span>Now</span>
+            </div>
+            Welcome. I am here. What is on your mind today?
+        </div>
+    </div>
+
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Talk to The Peacemaker..." autocomplete="off">
+        <button class="primary-btn" id="sendBtn" onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:11434/api/generate";
+        const MODEL = "custom-gemma"; 
+        
+        const chatContainer = document.getElementById('chatContainer');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        let isThinking = false;
+
+        function getTime() {
+            return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function appendMessage(sender, text) {
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble ${sender === 'You' ? 'chat-user' : 'chat-ai'}`;
+            bubble.innerHTML = `
+                <div class="chat-meta">
+                    <span class="chat-name">${sender === 'You' ? 'You' : 'The Peacemaker'}</span>
+                    <span>${getTime()}</span>
+                </div>
+                <div style="white-space: pre-wrap;">${text}</div>
+            `;
+            chatContainer.appendChild(bubble);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text || isThinking) return;
+
+            appendMessage('You', text);
+            userInput.value = "";
+            isThinking = true;
+            sendBtn.disabled = true;
+
+            const thinkingId = 'thinking-' + Date.now();
+            const thinkingBubble = document.createElement('div');
+            thinkingBubble.className = 'chat-bubble chat-ai';
+            thinkingBubble.id = thinkingId;
+            thinkingBubble.innerHTML = `<div class="status">The Peacemaker is thinking...</div>`;
+            chatContainer.appendChild(thinkingBubble);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            const prompt = `You are The Peacemaker, built by C43P Ministries. You are a calm, gentle companion walking side-by-side with the user.\n\nRULES:\n1. NEVER give unsolicited advice. NEVER use the words: 'Let's', 'focus', 'important', or 'We need to'.\n2. If the user is talking normally, start your response with the word 'You'.\n3. If you are not 100% sure of a fact, start with 'I am not sure, but'.\n4. CODE RULE: If the user asks for code, IGNORE the 'Start with You' rule. Provide the COMPLETE code inside a markdown block.\n\nUser: ${text}\nThe Peacemaker:`;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: MODEL,
+                        prompt: prompt,
+                        stream: false
+                    })
+                });
+
+                const data = await response.json();
+                document.getElementById(thinkingId).remove();
+                appendMessage('The Peacemaker', data.response.trim());
+            } catch (error) {
+                document.getElementById(thinkingId).remove();
+                appendMessage('The Peacemaker', "Error connecting to the local AI. Is Ollama running?");
+            }
+
+            isThinking = false;
+            sendBtn.disabled = false;
+            userInput.focus();
+        }
+
+        userInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>
