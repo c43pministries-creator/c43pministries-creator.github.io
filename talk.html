@@ -49,9 +49,7 @@
             overflow-y: auto;
             position: relative;
         }
-        .tab-content.active {
-            display: flex;
-        }
+        .tab-content.active { display: flex; }
 
         /* --- TALK TAB --- */
         .chat-area {
@@ -78,11 +76,7 @@
             padding: 15px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1em;
         }
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        .icon-btn {
-            background: none; border: none; font-size: 1.5em; cursor: pointer;
-            color: var(--warm-sand); padding: 0 10px;
-        }
+        .icon-btn { background: none; border: none; font-size: 1.5em; cursor: pointer; color: var(--warm-sand); padding: 0 10px; }
 
         /* --- JOURNAL & MEMORY TABS --- */
         .journal-container { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
@@ -105,6 +99,25 @@
             font-family: monospace; font-size: 1.5em; letter-spacing: 2px; margin: 20px 0;
             border: 1px solid var(--soft-clay); word-break: break-all;
         }
+
+        /* --- MORE TAB CARDS --- */
+        .more-card {
+            background-color: var(--card-bg); border: 1px solid var(--soft-clay);
+            border-radius: 8px; padding: 15px; margin-bottom: 15px;
+        }
+        .more-card h3 { margin: 0 0 5px 0; color: var(--warm-sand); font-size: 1.1em; }
+        .more-card p { margin: 0 0 10px 0; font-size: 0.85em; color: var(--text-muted); }
+        .more-card button { width: 100%; }
+
+        /* --- GUIDE & TUTORIALS --- */
+        .guide-section { background-color: var(--card-bg); padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--warm-sand); }
+        .guide-section h3 { margin-top: 0; color: var(--warm-sand); }
+        .guide-subsection { margin-bottom: 15px; }
+        .guide-subsection h4 { margin: 0 0 5px 0; color: var(--text-main); }
+        .guide-subsection p { margin: 0; font-size: 0.95em; }
+        .tutorial-step { background-color: var(--card-bg); padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--success); }
+        .tutorial-step h3 { margin-top: 0; color: var(--text-main); }
+        .tutorial-key { display: inline-block; background-color: var(--soft-clay); padding: 5px 10px; border-radius: 4px; font-size: 0.85em; margin-top: 10px; font-weight: bold; }
 
         /* Bottom Navigation */
         .bottom-nav {
@@ -141,9 +154,7 @@
 
     <!-- TALK TAB -->
     <div id="tab-talk" class="tab-content active">
-        <div class="chat-area" id="chatContainer">
-            <!-- Chat history renders here -->
-        </div>
+        <div class="chat-area" id="chatContainer"></div>
         <div class="input-area">
             <button class="icon-btn" onclick="setAlarmPrompt()" title="Set Alarm">⏰</button>
             <input type="text" id="userInput" placeholder="Type a message..." autocomplete="off">
@@ -162,9 +173,7 @@
 
     <!-- MEMORY TAB -->
     <div id="tab-memory" class="tab-content">
-        <div class="journal-container" id="memoryList">
-            <!-- Entries will load here -->
-        </div>
+        <div class="journal-container" id="memoryList"></div>
     </div>
 
     <!-- PASSWORDS TAB -->
@@ -189,43 +198,101 @@
     <!-- MORE TAB -->
     <div id="tab-more" class="tab-content">
         <div class="journal-container">
-            <h2 style="color: var(--warm-sand); margin-top: 0;">About The Peacemaker</h2>
-            <p><strong>Version:</strong> Web Beta 1.0</p>
-            <p><strong>Local Model:</strong> custom-gemma (Ollama)</p>
-            <p><strong>Privacy:</strong> 100% Local. Nothing leaves this device.</p>
-            
-            <button class="primary-btn" onclick="syncMasterDoc()" style="margin-top: 20px;">Sync Master Document</button>
-            <p id="syncStatus" style="font-size: 0.9em; color: var(--warm-sand);"></p>
+            <h2 style="color: var(--warm-sand); margin-top: 0;">More</h2>
 
+            <!-- TUTORIALS -->
+            <div class="more-card">
+                <h3>Tutorials</h3>
+                <p>Step-by-step walkthroughs for the app.</p>
+                <button class="primary-btn" onclick="showTutorials()">Open Tutorials</button>
+            </div>
+
+            <!-- THE GUIDE -->
+            <div class="more-card">
+                <h3>The Guide</h3>
+                <p>Learn how everything works.</p>
+                <button class="primary-btn" onclick="showGuide()">Open Guide</button>
+            </div>
+
+            <!-- CALENDAR & ALARMS -->
+            <div class="more-card">
+                <h3>Calendar & Alarms</h3>
+                <p>Manage your time, alarms, and availability.</p>
+                <button class="primary-btn" onclick="setAlarmPrompt()">Set an Alarm</button>
+            </div>
+
+            <!-- WELL OF PEACE -->
+            <div class="more-card">
+                <h3>The Well of Peace</h3>
+                <button class="primary-btn" onclick="window.location.href='well.html'">Enter The Well of Peace</button>
+            </div>
+
+            <!-- PROFILE -->
+            <div class="more-card">
+                <h3>Your Profile</h3>
+                <p>Set your display name.</p>
+                <input type="text" id="profileName" placeholder="Enter your name" style="width: 100%; padding: 10px; margin-bottom: 10px; background: var(--bg-color); border: 1px solid var(--soft-clay); color: white; border-radius: 4px;">
+                <button class="primary-btn" onclick="saveProfile()">Save Profile</button>
+            </div>
+
+            <!-- SYNC MD -->
+            <div class="more-card">
+                <h3>Sync Master Document</h3>
+                <p>Update The Peacemaker with the latest rules.</p>
+                <button class="primary-btn" onclick="syncMasterDoc()">Sync Master Document</button>
+                <p id="syncStatus" style="font-size: 0.9em; color: var(--warm-sand); margin-top: 10px;"></p>
+            </div>
+
+            <!-- THEME -->
+            <div class="more-card">
+                <h3>Theme</h3>
+                <p>Choose your visual experience.</p>
+                <button class="primary-btn" onclick="toggleTheme('dark')">Dark Mode</button>
+                <button class="primary-btn" onclick="toggleTheme('light')" style="margin-top: 5px; background-color: #ddd; color: #000;">Light Mode</button>
+            </div>
+
+            <!-- BOT POLICY -->
             <div class="rule-box">
                 <h3>⚠️ Zero-Tolerance Bot Policy</h3>
                 <p>Bots are strictly prohibited inside the Peace Place ecosystem. If a user is found using any type of bot, scraper, or automated script, it is an immediate, <strong>permanent ban for life</strong>. There is no appeal. The Peacemaker's chat never ends, but it ends for bots.</p>
             </div>
+            
+            <p style="font-size: 0.9em; color: var(--text-muted); margin-top: 30px; text-align: center;">"Kindness first. Respect always. Faith never forced."</p>
+        </div>
+    </div>
 
-            <p style="font-size: 0.9em; color: var(--text-muted); margin-top: 30px;">"Kindness first. Respect always. Faith never forced."</p>
+    <!-- TUTORIALS VIEW (Hidden by default) -->
+    <div id="view-tutorials" class="tab-content" style="background-color: var(--bg-color); z-index: 20; position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
+        <div class="top-nav">
+            <h1>Tutorials</h1>
+            <button class="back-btn" onclick="closeSubView('view-tutorials')">Back</button>
+        </div>
+        <div class="journal-container">
+            <!-- Tutorials injected here by JS -->
+            <div id="tutorialContent"></div>
+        </div>
+    </div>
+
+    <!-- GUIDE VIEW (Hidden by default) -->
+    <div id="view-guide" class="tab-content" style="background-color: var(--bg-color); z-index: 20; position: absolute; top: 0; left: 0; right: 0; bottom: 0;">
+        <div class="top-nav">
+            <h1>The Guide</h1>
+            <button class="back-btn" onclick="closeSubView('view-guide')">Back</button>
+        </div>
+        <div class="journal-container">
+            <!-- Guide injected here by JS -->
+            <div id="guideContent"></div>
         </div>
     </div>
 
     <!-- BOTTOM NAVIGATION -->
     <div class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('talk', this)">
-            <span class="nav-icon">💬</span> Talk
-        </button>
-        <button class="nav-item" onclick="switchTab('journal', this)">
-            <span class="nav-icon">✍️</span> Journal
-        </button>
-        <button class="nav-item" onclick="switchTab('memory', this)">
-            <span class="nav-icon">🧠</span> Memory
-        </button>
-        <button class="nav-item" onclick="switchTab('passwords', this)">
-            <span class="nav-icon">🔒</span> Passwords
-        </button>
-        <button class="nav-item" onclick="switchTab('navigator', this)">
-            <span class="nav-icon">🧭</span> Navigator
-        </button>
-        <button class="nav-item" onclick="switchTab('more', this)">
-            <span class="nav-icon">⚙️</span> More
-        </button>
+        <button class="nav-item active" onclick="switchTab('talk', this)"><span class="nav-icon">💬</span> Talk</button>
+        <button class="nav-item" onclick="switchTab('journal', this)"><span class="nav-icon">✍️</span> Journal</button>
+        <button class="nav-item" onclick="switchTab('memory', this)"><span class="nav-icon">🧠</span> Memory</button>
+        <button class="nav-item" onclick="switchTab('passwords', this)"><span class="nav-icon">🔒</span> Passwords</button>
+        <button class="nav-item" onclick="switchTab('navigator', this)"><span class="nav-icon">🧭</span> Navigator</button>
+        <button class="nav-item" onclick="switchTab('more', this)"><span class="nav-icon">⚙️</span> More</button>
     </div>
 
     <script>
@@ -235,7 +302,9 @@
 
         // --- TAB SWITCHING LOGIC ---
         function switchTab(tabId, btnElement) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                if(!tab.id.startsWith('view-')) tab.classList.remove('active');
+            });
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
             
             document.getElementById('tab-' + tabId).classList.add('active');
@@ -277,7 +346,7 @@
             });
         }
 
-        // --- PASSWORD GENERATOR LOGIC ---
+        // --- PASSWORDS ---
         function generatePassword() {
             const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
             let password = "";
@@ -285,33 +354,104 @@
             document.getElementById('passwordDisplay').innerText = password;
         }
 
-        // --- ALARM LOGIC ---
+        // --- ALARMS ---
         function setAlarmPrompt() {
             const minutes = prompt("Set an alarm for how many minutes from now? (e.g., 5)");
             if (minutes && !isNaN(minutes)) {
                 const ms = parseInt(minutes) * 60000;
-                alert(`Alarm set for ${minutes} minutes from now. I will not disturb you until then.`);
+                alert(`Alarm set for ${minutes} minutes from now.`);
                 setTimeout(() => {
                     alert("⏰ ALARM: The time you requested has passed.");
                 }, ms);
             }
         }
 
-        // --- SYNC MASTER DOCUMENT LOGIC ---
+        // --- PROFILE ---
+        function saveProfile() {
+            const name = document.getElementById('profileName').value.trim();
+            if (name) {
+                localStorage.setItem('peacemaker_name', name);
+                alert("Name saved as: " + name);
+            }
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedName = localStorage.getItem('peacemaker_name');
+            if(savedName) document.getElementById('profileName').value = savedName;
+        });
+
+        // --- THEME ---
+        function toggleTheme(mode) {
+            if (mode === 'light') {
+                document.documentElement.style.setProperty('--bg-color', '#f4f1ea');
+                document.documentElement.style.setProperty('--text-main', '#1a1817');
+                document.documentElement.style.setProperty('--text-muted', '#555');
+                document.documentElement.style.setProperty('--card-bg', '#e3c29d');
+                document.documentElement.style.setProperty('--soft-clay', '#ccc');
+            } else {
+                document.documentElement.style.setProperty('--bg-color', '#1a1817');
+                document.documentElement.style.setProperty('--text-main', '#f4f1ea');
+                document.documentElement.style.setProperty('--text-muted', '#b8b0a1');
+                document.documentElement.style.setProperty('--card-bg', '#24211f');
+                document.documentElement.style.setProperty('--soft-clay', '#8b7355');
+            }
+        }
+
+        // --- SUB VIEWS (GUIDE & TUTORIALS) ---
+        function closeSubView(viewId) {
+            document.getElementById(viewId).classList.remove('active');
+        }
+
+        function showTutorials() {
+            document.getElementById('view-tutorials').classList.add('active');
+            const container = document.getElementById('tutorialContent');
+            if (container.innerHTML !== "") return; // Only load once
+
+            const tutorials = [
+                { title: "Talking with The Peacemaker", intro: "The Talk tab is where you speak with your companion. Everything is saved locally and encrypted.", steps: [ { title: "1. Send a message", body: "Type what you are feeling or thinking. The Peacemaker will read it and reply.", action: "Type in the box and tap the Send arrow." }, { title: "2. It remembers", body: "The Peacemaker reads the last few messages to keep the context.", action: "Try telling it your favorite color, then ask it what your favorite color is." } ] },
+                { title: "Your Journal", intro: "The Journal tab is where you write. Every entry is private by default.", steps: [ { title: "1. Write an entry", body: "Tap the text field and type. There is no wrong way to write.", action: "Type your entry." }, { title: "2. Save it", body: "Tap 'Save entry.' It is encrypted on your device immediately.", action: "Tap 'Save entry.'" } ] },
+                { title: "More Tools", intro: "The More tab holds your settings, your search engine, your calendar, and your community tools.", steps: [ { title: "1. The Well of Peace", body: "Enter the community. Everything is scanned by the Peace Shield for scams before it is posted.", action: "Tap 'Enter The Well of Peace.'" }, { title: "2. Calendar & Alarms", body: "Set alarms for medication, waking up, or events.", action: "Tap 'Set an Alarm.'" } ] }
+            ];
+
+            tutorials.forEach(tut => {
+                let html = `<h2 style="color:var(--warm-sand); margin-top:20px;">${tut.title}</h2><p style="color:var(--text-muted);">${tut.intro}</p>`;
+                tut.steps.forEach(step => {
+                    html += `<div class="tutorial-step"><h3>${step.title}</h3><p>${step.body}</p><div class="tutorial-key">👉 ${step.action}</div></div>`;
+                });
+                container.innerHTML += html;
+            });
+        }
+
+        function showGuide() {
+            document.getElementById('view-guide').classList.add('active');
+            const container = document.getElementById('guideContent');
+            if (container.innerHTML !== "") return;
+
+            const guide = [
+                { title: "About The Peacemaker", summary: "What this app is, and what it is not.", subsections: [ { title: "What this is", body: "The Peacemaker is a companion, not a commander. It walks beside you. It does not control you." }, { title: "What this is not", body: "It is not a doctor. It does not diagnose. It does not treat. If you are in danger, call for help directly." } ] },
+                { title: "Talk", summary: "The conversation with your companion.", subsections: [ { title: "The local model", body: "The Peacemaker runs on an on-device language model. It does not connect to the internet." }, { title: "Deleting messages", body: "Every message has a small trash can icon. Tapping it deletes that specific message permanently." } ] },
+                { title: "Privacy", summary: "What The Peacemaker knows, and what it never knows.", subsections: [ { title: "Everything stays on your device", body: "Your journal, your voice, your reflections, and your conversations all live on the device you are holding. None of it is transmitted." } ] }
+            ];
+
+            guide.forEach(sec => {
+                let html = `<div class="guide-section"><h3>${sec.title}</h3><p style="color:var(--text-muted); font-size:0.9em; margin-bottom:15px;">${sec.summary}</p>`;
+                sec.subsections.forEach(sub => {
+                    html += `<div class="guide-subsection"><h4>${sub.title}</h4><p>${sub.body}</p></div>`;
+                });
+                html += `</div>`;
+                container.innerHTML += html;
+            });
+        }
+
+        // --- SYNC MASTER DOCUMENT ---
         async function syncMasterDoc() {
             const status = document.getElementById('syncStatus');
             status.innerText = "Syncing from laptop...";
             status.style.color = "var(--warm-sand)";
-            
             try {
-                // Fetches from your laptop's TinyHTTP server (Port 8080)
                 const response = await fetch("http://127.0.0.1:8080/master_doc");
                 const text = await response.text();
-                
-                // Save the whole document to the browser's local storage
                 localStorage.setItem('peacemaker_md', text);
                 
-                // Extract just the Design Rules (Section 4) for the 2B model to read
                 const rulesStart = text.indexOf('## 4. THE DESIGN RULES');
                 const rulesEnd = text.indexOf('## 5.');
                 if (rulesStart !== -1 && rulesEnd !== -1) {
@@ -319,7 +459,6 @@
                 } else {
                     masterDocContext = "You are a peaceful companion.";
                 }
-                
                 status.innerText = "Master Document synced! The Peacemaker knows the rules.";
                 status.style.color = "var(--success)";
             } catch (error) {
@@ -328,27 +467,22 @@
             }
         }
 
-        // Load MD on startup if it exists in local storage
         window.addEventListener('DOMContentLoaded', () => {
             const savedMD = localStorage.getItem('peacemaker_md');
             if (savedMD) {
                 const rulesStart = savedMD.indexOf('## 4. THE DESIGN RULES');
                 const rulesEnd = savedMD.indexOf('## 5.');
-                if (rulesStart !== -1 && rulesEnd !== -1) {
-                    masterDocContext = savedMD.substring(rulesStart, rulesEnd);
-                }
+                if (rulesStart !== -1 && rulesEnd !== -1) masterDocContext = savedMD.substring(rulesStart, rulesEnd);
             }
         });
 
-        // --- TALK LOGIC (OLLAMA & PERSISTENCE) ---
+        // --- TALK LOGIC ---
         const API_URL = "http://127.0.0.1:11434/api/generate";
         const MODEL = "custom-gemma"; 
-        
         const chatContainer = document.getElementById('chatContainer');
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
         
-        // Load Chat History from LocalStorage
         let chatHistory = JSON.parse(localStorage.getItem('peacemaker_chat')) || [
             { sender: 'The Peacemaker', text: 'Welcome back. I am here whenever you need me. How are you feeling right now?', time: 'Now' }
         ];
@@ -358,40 +492,26 @@
             chatHistory.forEach(msg => {
                 const bubble = document.createElement('div');
                 bubble.className = `chat-bubble ${msg.sender === 'You' ? 'chat-user' : 'chat-ai'}`;
-                bubble.innerHTML = `
-                    <div class="chat-meta">
-                        <span class="chat-name">${msg.sender}</span>
-                        <span>${msg.time}</span>
-                    </div>
-                    <div style="white-space: pre-wrap;">${msg.text}</div>
-                `;
+                bubble.innerHTML = `<div class="chat-meta"><span class="chat-name">${msg.sender}</span><span>${msg.time}</span></div><div style="white-space: pre-wrap;">${msg.text}</div>`;
                 chatContainer.appendChild(bubble);
             });
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
-        function getTime() {
-            return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-        }
-
-        function saveChat() {
-            localStorage.setItem('peacemaker_chat', JSON.stringify(chatHistory));
-        }
+        function getTime() { return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }); }
+        function saveChat() { localStorage.setItem('peacemaker_chat', JSON.stringify(chatHistory)); }
 
         async function sendMessage() {
             const text = userInput.value.trim();
             if (!text || isThinking) return;
 
-            // Add User Message
             chatHistory.push({ sender: 'You', text: text, time: getTime() });
             saveChat();
             renderChat();
-            
             userInput.value = "";
             isThinking = true;
             sendBtn.disabled = true;
 
-            // Add Thinking Bubble
             const thinkingId = 'thinking-' + Date.now();
             const thinkingBubble = document.createElement('div');
             thinkingBubble.className = 'chat-bubble chat-ai';
@@ -408,32 +528,23 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ model: MODEL, prompt: prompt, stream: false })
                 });
-
                 const data = await response.json();
                 document.getElementById(thinkingId).remove();
-                
-                // Add AI Message
                 chatHistory.push({ sender: 'The Peacemaker', text: data.response.trim(), time: getTime() });
                 saveChat();
                 renderChat();
-                
             } catch (error) {
                 document.getElementById(thinkingId).remove();
                 chatHistory.push({ sender: 'The Peacemaker', text: "Error connecting to the local AI. Is Ollama running?", time: getTime() });
                 saveChat();
                 renderChat();
             }
-
             isThinking = false;
             sendBtn.disabled = false;
             userInput.focus();
         }
 
-        userInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') sendMessage();
-        });
-
-        // Initialize Chat on Load
+        userInput.addEventListener('keypress', function (e) { if (e.key === 'Enter') sendMessage(); });
         renderChat();
     </script>
 </body>
